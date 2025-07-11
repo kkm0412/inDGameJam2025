@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public static Action<int> OnHpChanged;
+    [SerializeField]
     private ArrowSystem arrowSystem;
 
     // 플레이어의 체력
@@ -55,7 +56,6 @@ public class GameManager : MonoBehaviour
         }
         combo = 0;
         leftStageTime = stageTimeLimit;
-        arrowSystem = GetComponent<ArrowSystem>();
     }
 
     private void Start()

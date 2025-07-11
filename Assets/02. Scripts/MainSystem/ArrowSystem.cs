@@ -31,31 +31,13 @@ public class ArrowSystem : MonoBehaviour
     private Queue<int> customerQueue = new Queue<int>();
     private List<int> customerIndexList = new List<int>();
 
-    private PlayerInput inputActions;
     private Animator animator;
     private SpriteRenderer sr;
 
     private void Awake()
     {
-        inputActions = new PlayerInput();
         animator = playerHand.GetComponent<Animator>();
         sr = playerHand.GetComponent<SpriteRenderer>();
-    }
-
-    private void OnEnable()
-    {
-        inputActions.GamePlay.Enable();
-
-        inputActions.GamePlay.InputUp.performed += ctx => CheckInput(ArrowKey.Up);
-        inputActions.GamePlay.InputDown.performed += ctx => CheckInput(ArrowKey.Down);
-        inputActions.GamePlay.InputLeft.performed += ctx => CheckInput(ArrowKey.Left);
-        inputActions.GamePlay.InputRight.performed += ctx => CheckInput(ArrowKey.Right);
-        inputActions.GamePlay.InputSpace.performed += ctx => CheckInput(ArrowKey.Space);
-    }
-
-    private void OnDisable()
-    {
-        inputActions.GamePlay.Disable();
     }
 
     private void Start()
@@ -185,7 +167,7 @@ public class ArrowSystem : MonoBehaviour
     // TODO : 추후 (0,7)로 수정할 것
     public int ChangeCustomerSprite()
     {
-        return Random.Range(0, 4);
+        return Random.Range(0, 6);
     }
 
     /// <summary>
@@ -235,7 +217,7 @@ public class ArrowSystem : MonoBehaviour
     /// 입력받은 키가 생성된 화살표와 같은 키인지 확인한다,
     /// </summary>
     /// <returns>생성된 화살표와 같은 키를 입력받으면 true, 다른 키를 입력받으면 false</returns>
-    private void CheckInput(ArrowKey key)
+    public void CheckInput(ArrowKey key)
     {
         if (!isActive) return;
 
