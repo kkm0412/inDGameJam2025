@@ -56,13 +56,13 @@ public class ArrowSystem : MonoBehaviour
             if (currentTime <= 0)
             {
                 FailInput();
-            }    
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             StartArrowInput(spawnArrow);
-        } 
+        }
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ public class ArrowSystem : MonoBehaviour
         currentKey = 0;
         isActive = true;
 
-        
+
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class ArrowSystem : MonoBehaviour
     {
         string path = $"Arrows/{key}Arrow";
         return Resources.Load<Sprite>(path);
-    }    
+    }
 
     /// <summary>
     /// 입력받은 키가 생성된 화살표와 같은 키인지 확인한다,
@@ -181,7 +181,7 @@ public class ArrowSystem : MonoBehaviour
     /// </summary>
     public void ClearArrow()
     {
-        foreach(Transform child in arrowParent)
+        foreach (Transform child in arrowParent)
             Destroy(child.gameObject);
 
         sequence.Clear();

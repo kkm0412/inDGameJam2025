@@ -9,6 +9,7 @@ using UnityEngine.XR;
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
+    EnemyAttackWarning attackWarning;
     private int atkDirection = 0; //0일시 좌, 1일시 우
     [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
@@ -19,10 +20,13 @@ public class EnemyAttackController : MonoBehaviour
     [SerializeField] private float attackComingTime;  //적의 공격이 날아오는 시간
     private bool isParryAble = false;  //공격을 패링할 수 있음. True일시 패링 활성화
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
+
+    private bool isTryParry = false; //패링 시도 유무(패링 효과 관리용)
     private bool isParrySuccess = false; //패링 성공 유무
 
     void Start()
     {
+        attackWarning = GetComponent<EnemyAttackWarning>();
         StartCoroutine(EnemyAttack());
     }
 
@@ -34,7 +38,7 @@ public class EnemyAttackController : MonoBehaviour
             isParrySuccess = false; //초기화
 
             attackPrepareTime = Random.Range(attackPrePareTimeMin, attackPrePareTimeMax);
-
+            Debug.Log("준비시간: " + attackPrepareTime);
 
             Debug.Log("공격 준비");
             yield return new WaitForSeconds(attackPrepareTime);
@@ -61,20 +65,20 @@ public class EnemyAttackController : MonoBehaviour
             Debug.Log("좌 공격 시작");
             //적의 공격이 좌에서 올 경우
             //+)여기에 좌에서 오는 효과 적용
+            attackWarning.WarnEffect(0, attackComingTime);
         }
         else
         {
             Debug.Log("우 공격 시작");
             //적의 공격이 우에서 올 경우
             //+)여기에 우에서 오는 효과 적용
+            attackWarning.WarnEffect(1, attackComingTime);
         }
         //여기다가 UI상에서 공격이 날라가는 메서드 적용
-        //GameObject enemyBomb = Instantiate(EnemyBombPrefab);
-        //enemyBomb.GetComponent<EnemyBomb>().SetTime(attackComingTime, parryTime);
-        //
-        yield return new WaitForSeconds(attackComingTime);
 
+        yield return new WaitForSeconds(attackComingTime);
         Debug.Log("공격이 바로 앞까지 옴");
+        attackWarning.WarnParry(atkDir, parryTime);
         isParryAble = true;
         yield return new WaitForSeconds(parryTime);
         isParryAble = false;
@@ -102,22 +106,34 @@ public class EnemyAttackController : MonoBehaviour
                     Debug.Log("우 패링 실패");
                     isParrySuccess = false;
                 }
+                TryParry();
                 isParryAble = false;
+
             }
             if (parryDir == 1)
             {
                 if (atkDirection == 1)
                 {
                     Debug.Log("우 패링 성공");
-                    isParrySuccess = true;
+                    isParryAble = true;
                 }
                 else
                 {
                     Debug.Log("좌 패링 실패");
                     isParrySuccess = false;
                 }
+                TryParry();
                 isParryAble = false;
             }
         }
     }
+    /// <summary>
+    /// 패링 시도시 패링 경고 효과 끊기
+    /// </summary>
+    /// <param name="isParry">패리했는지 유무</param>
+    private void TryParry()
+    {
+        attackWarning.isTryParry = true;
+    }
+
 }
