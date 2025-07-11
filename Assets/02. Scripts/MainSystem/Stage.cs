@@ -6,9 +6,9 @@ public class Stage : MonoBehaviour
 {
     private ArrowSystem arrowSystem;
 
-    private bool stageStart = false;
     private void Awake()
     {
+        
         arrowSystem = GetComponent<ArrowSystem>();
     }
 
@@ -26,7 +26,8 @@ public class Stage : MonoBehaviour
     IEnumerator GameStart()
     {
         yield return new WaitForSeconds(3f);
+        GameManager.Instance.stageStart = true;
         arrowSystem.customerImage.gameObject.SetActive(true);
-        arrowSystem.StartArrowInput(arrowSystem.spawnArrow);
+        arrowSystem.StartArrowInput();
     }
 }

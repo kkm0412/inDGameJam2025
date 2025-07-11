@@ -20,7 +20,7 @@ public class StageDatabase : ScriptableObject
     public int enemyHealAmount = 1;
 
     // 적 폭탄의 데미지 범위 (예: 5~10)
-    public Vector2Int enemyBombDamageRange = new Vector2Int(5, 10);
+    public int enemyBombDamageRange = 5;
 
     // 이 스테이지를 클리어했을 때 플레이어에게 추가되는 체력
     public int playerHPBonusOnClear = 100;

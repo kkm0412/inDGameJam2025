@@ -127,6 +127,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InputSpace"",
+                    ""type"": ""Button"",
+                    ""id"": ""c442f8c7-b119-4329-a9f2-aca24b573522"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -217,6 +226,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""InputRight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fca3985b-a113-46ae-be77-6727cd628256"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InputSpace"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +249,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_GamePlay_InputDown = m_GamePlay.FindAction("InputDown", throwIfNotFound: true);
         m_GamePlay_InputLeft = m_GamePlay.FindAction("InputLeft", throwIfNotFound: true);
         m_GamePlay_InputRight = m_GamePlay.FindAction("InputRight", throwIfNotFound: true);
+        m_GamePlay_InputSpace = m_GamePlay.FindAction("InputSpace", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -313,6 +334,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_GamePlay_InputDown;
     private readonly InputAction m_GamePlay_InputLeft;
     private readonly InputAction m_GamePlay_InputRight;
+    private readonly InputAction m_GamePlay_InputSpace;
     /// <summary>
     /// Provides access to input actions defined in input action map "GamePlay".
     /// </summary>
@@ -340,6 +362,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "GamePlay/InputRight".
         /// </summary>
         public InputAction @InputRight => m_Wrapper.m_GamePlay_InputRight;
+        /// <summary>
+        /// Provides access to the underlying input action "GamePlay/InputSpace".
+        /// </summary>
+        public InputAction @InputSpace => m_Wrapper.m_GamePlay_InputSpace;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -378,6 +404,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InputRight.started += instance.OnInputRight;
             @InputRight.performed += instance.OnInputRight;
             @InputRight.canceled += instance.OnInputRight;
+            @InputSpace.started += instance.OnInputSpace;
+            @InputSpace.performed += instance.OnInputSpace;
+            @InputSpace.canceled += instance.OnInputSpace;
         }
 
         /// <summary>
@@ -401,6 +430,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InputRight.started -= instance.OnInputRight;
             @InputRight.performed -= instance.OnInputRight;
             @InputRight.canceled -= instance.OnInputRight;
+            @InputSpace.started -= instance.OnInputSpace;
+            @InputSpace.performed -= instance.OnInputSpace;
+            @InputSpace.canceled -= instance.OnInputSpace;
         }
 
         /// <summary>
@@ -469,5 +501,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInputRight(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "InputSpace" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInputSpace(InputAction.CallbackContext context);
     }
 }
