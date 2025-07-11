@@ -14,6 +14,7 @@ public class Stage : MonoBehaviour
 
     private void Start()
     {
+        arrowSystem.customerImage.gameObject.SetActive(false);
         StartCoroutine(GameStart());
     }
 
@@ -25,6 +26,7 @@ public class Stage : MonoBehaviour
     IEnumerator GameStart()
     {
         yield return new WaitForSeconds(3f);
+        arrowSystem.customerImage.gameObject.SetActive(true);
         arrowSystem.StartArrowInput(arrowSystem.spawnArrow);
     }
 }

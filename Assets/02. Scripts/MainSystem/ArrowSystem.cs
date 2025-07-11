@@ -11,6 +11,9 @@ public class ArrowSystem : MonoBehaviour
     public int spawnArrow;
     public GameObject arrowPrefab;
     public Transform arrowParent;
+
+    public Image customerImage;
+
     public float spacing = 100f;
     public float limitTime = 5f;
     public Slider arrowTimer;
@@ -83,10 +86,16 @@ public class ArrowSystem : MonoBehaviour
             child.GetComponent<Image>().sprite = CreateArrow(sequence[i]);
         }
         ArrangeChildrenCentered();
+        customerImage.sprite = GetCustomerSprite(ChangeCustomerSprite());
         currentKey = 0;
         isActive = true;
 
         
+    }
+
+    public int ChangeCustomerSprite()
+    {
+        return Random.Range(0, 4);
     }
 
     /// <summary>
@@ -98,7 +107,13 @@ public class ArrowSystem : MonoBehaviour
     {
         string path = $"Arrows/{key}Arrow";
         return Resources.Load<Sprite>(path);
-    }    
+    } 
+    
+    private Sprite GetCustomerSprite(int index)
+    {
+        string path = $"Customers/Customer{index}";
+        return Resources.Load<Sprite>(path);
+    }
 
     /// <summary>
     /// 입력받은 키가 생성된 화살표와 같은 키인지 확인한다,
@@ -172,7 +187,9 @@ public class ArrowSystem : MonoBehaviour
 
     private IEnumerator DelayedFailInput()
     {
+        customerImage.gameObject.SetActive(false);
         yield return new WaitForSeconds(2f); // 한 프레임 기다림 → Destroy 반영됨
+        customerImage.gameObject.SetActive(true);
         StartArrowInput(spawnArrow);
     }
 
