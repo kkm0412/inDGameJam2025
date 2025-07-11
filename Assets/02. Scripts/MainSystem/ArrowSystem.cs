@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class ArrowSystem : MonoBehaviour
 {
@@ -11,31 +12,57 @@ public class ArrowSystem : MonoBehaviour
     public GameObject arrowPrefab;
     public Transform arrowParent;
     public float spacing = 100f;
+    public float limitTime = 5f;
+    public Slider arrowTimer;
+    private float currentTime = 0f;
     private List<ArrowKey> sequence = new();
     private int currentKey = 0;
     private bool isActive = false;
 
+    private PlayerInput inputActions;
+
+    private void Awake()
+    {
+        inputActions = new PlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        inputActions.GamePlay.Enable();
+
+        inputActions.GamePlay.InputUp.performed += ctx => CheckInput(ArrowKey.Up);
+        inputActions.GamePlay.InputDown.performed += ctx => CheckInput(ArrowKey.Down);
+        inputActions.GamePlay.InputLeft.performed += ctx => CheckInput(ArrowKey.Left);
+        inputActions.GamePlay.InputRight.performed += ctx => CheckInput(ArrowKey.Right);
+    }
+
+    private void OnDisable()
+    {
+        inputActions.GamePlay.Disable();
+    }
 
     private void Start()
     {
-        
+        arrowTimer.gameObject.SetActive(false);
+        arrowTimer.maxValue = limitTime;
     }
 
     private void Update()
     {
+        if (isActive)
+        {
+            currentTime -= Time.deltaTime;
+            arrowTimer.value = currentTime;
+            if (currentTime <= 0)
+            {
+                FailInput();
+            }    
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             StartArrowInput(spawnArrow);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow)
-            || Input.GetKeyDown(KeyCode.RightArrow)
-            || Input.GetKeyDown(KeyCode.UpArrow)
-            || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (CheckInput()) return;
-            Debug.Log("틀림");
-        }    
+        } 
     }
 
     /// <summary>
@@ -45,6 +72,8 @@ public class ArrowSystem : MonoBehaviour
     public void StartArrowInput(int count)
     {
         ClearArrow();
+        arrowTimer.gameObject.SetActive(true);
+        currentTime = limitTime;
         for (int i = 0; i < count; i++)
         {
             sequence.Add((ArrowKey)Random.Range(0, 4));
@@ -78,12 +107,11 @@ public class ArrowSystem : MonoBehaviour
     /// 입력받은 키가 생성된 화살표와 같은 키인지 확인한다,
     /// </summary>
     /// <returns>생성된 화살표와 같은 키를 입력받으면 true, 다른 키를 입력받으면 false</returns>
-    private bool CheckInput()
+    private void CheckInput(ArrowKey key)
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && sequence[currentKey] == ArrowKey.Left
-            || Input.GetKeyDown(KeyCode.RightArrow) && sequence[currentKey] == ArrowKey.Right
-            || Input.GetKeyDown(KeyCode.DownArrow) && sequence[currentKey] == ArrowKey.Down
-            || Input.GetKeyDown(KeyCode.UpArrow) && sequence[currentKey] == ArrowKey.Up)
+        if (!isActive) return;
+
+        if (key == sequence[currentKey])
         {
             arrowParent.Find(currentKey.ToString()).gameObject.SetActive(false);
             currentKey++;
@@ -91,7 +119,6 @@ public class ArrowSystem : MonoBehaviour
             {
                 SuccessInput();
             }
-            return true;
         }
         else
         {
@@ -101,7 +128,6 @@ public class ArrowSystem : MonoBehaviour
                 Transform child = arrowParent.GetChild(i);
                 child.gameObject.SetActive(true);
             }
-            return false;
         }
     }
 
@@ -128,7 +154,16 @@ public class ArrowSystem : MonoBehaviour
     {
         isActive = false;
         ClearArrow();
+        arrowTimer.gameObject.SetActive(false);
         Debug.Log("성공");
+    }
+
+    private void FailInput()
+    {
+        isActive = false;
+        ClearArrow();
+        arrowTimer.gameObject.SetActive(false);
+        Debug.Log("실패");
     }
 
     /// <summary>
