@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.XR;
 
 
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
+    private int atkDirection = 0; //0일시 좌, 1일시 우
     [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
     [SerializeField] private float attackPrePareTimeMax;    //적 공격 준비시간 최대
@@ -28,23 +30,16 @@ public class EnemyAttackController : MonoBehaviour
     {
         while (true)
         {
+            atkDirection = Random.Range(0, 2);  //0은 좌, 1은 우;
             isParrySuccess = false; //초기화
 
             attackPrepareTime = Random.Range(attackPrePareTimeMin, attackPrePareTimeMax);
+
+
             Debug.Log("공격 준비");
             yield return new WaitForSeconds(attackPrepareTime);
 
-            Debug.Log("공격 시작");
-            //여기다가 UI상에서 공격이 날라가는 메서드 적용
-            GameObject enemyBomb = Instantiate(EnemyBombPrefab);
-            enemyBomb.GetComponent<EnemyBomb>().SetTime(attackComingTime, parryTime);
-            //
-            yield return new WaitForSeconds(attackComingTime);
-
-            Debug.Log("공격이 바로 앞까지 옴");
-            isParryAble = true;
-            yield return new WaitForSeconds(parryTime);
-            isParryAble = false;
+            yield return StartCoroutine(EnemyAttackDirection(atkDirection));//좌 or 공격
 
             //패링 성공 유무에 따라서 공격을 입을지, 안 입을지 판단.
             if (!isParrySuccess)
@@ -55,25 +50,74 @@ public class EnemyAttackController : MonoBehaviour
         }
     }
     /// <summary>
-    /// 적 공격 패링하는 메서드, 컨트롤 클래스를 패링 키에다가 넣으면 됨.
+    /// 적의 공격이 좌와 우로 나누어질때를 구분함.
     /// </summary>
-    public void ParryEnemyAttack()
+    /// <param name="atkDir">0일시 좌, 1일시 우,</param>
+    /// <returns></returns>
+    IEnumerator EnemyAttackDirection(int atkDir)
+    {
+        if (atkDir == 0)
+        {
+            Debug.Log("좌 공격 시작");
+            //적의 공격이 좌에서 올 경우
+            //+)여기에 좌에서 오는 효과 적용
+        }
+        else
+        {
+            Debug.Log("우 공격 시작");
+            //적의 공격이 우에서 올 경우
+            //+)여기에 우에서 오는 효과 적용
+        }
+        //여기다가 UI상에서 공격이 날라가는 메서드 적용
+        //GameObject enemyBomb = Instantiate(EnemyBombPrefab);
+        //enemyBomb.GetComponent<EnemyBomb>().SetTime(attackComingTime, parryTime);
+        //
+        yield return new WaitForSeconds(attackComingTime);
+
+        Debug.Log("공격이 바로 앞까지 옴");
+        isParryAble = true;
+        yield return new WaitForSeconds(parryTime);
+        isParryAble = false;
+
+    }
+
+    /// <summary>
+    /// 적의 공격을 패링하는 메서드.
+    /// </summary>
+    /// <param name="parryDir">0일시 좌 패링, 1일시 우 패링,</param>
+    public void ParryEnemyAttack(int parryDir)
     {
         //패링 가능할때만 패링할수 있음. 
         if (isParryAble && !isParrySuccess)
         {
-            isParrySuccess = true;
-            Debug.Log("패링 성공");
-            //패링 성공시 효과 적용 메서드
+            if (parryDir == 0)
+            {
+                if (atkDirection == 0)
+                {
+                    Debug.Log("좌 패링 성공");
+                    isParrySuccess = true;
+                }
+                else
+                {
+                    Debug.Log("우 패링 실패");
+                    isParrySuccess = false;
+                }
+                isParryAble = false;
+            }
+            if (parryDir == 1)
+            {
+                if (atkDirection == 1)
+                {
+                    Debug.Log("우 패링 성공");
+                    isParrySuccess = true;
+                }
+                else
+                {
+                    Debug.Log("좌 패링 실패");
+                    isParrySuccess = false;
+                }
+                isParryAble = false;
+            }
         }
     }
-    //사용법
-    //
-    // EnemyAttackController enemycontroller;
-    // enemycontroller = this.GetComponent<EnemyAttackController>();
-    // if (Input.GetMouseButtonDown(0)) //키 입력
-    // {
-    //     enemycontroller.ParryEnemyAttack();
-    // }
-
 }
