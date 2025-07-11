@@ -14,7 +14,7 @@ public class Stage : MonoBehaviour
 
     private void Start()
     {
-        
+        StartCoroutine(GameStart());
     }
 
     private void Update()

@@ -82,14 +82,11 @@ public class ArrowSystem : MonoBehaviour
             Transform child = arrow.transform.Find("Arrow");
             child.GetComponent<Image>().sprite = CreateArrow(sequence[i]);
         }
-
-
-        // UI 출력
-
+        ArrangeChildrenCentered();
         currentKey = 0;
         isActive = true;
 
-        ArrangeChildrenCentered();
+        
     }
 
     /// <summary>
@@ -154,8 +151,14 @@ public class ArrowSystem : MonoBehaviour
     {
         isActive = false;
         ClearArrow();
-        arrowTimer.gameObject.SetActive(false);
         Debug.Log("성공");
+        StartCoroutine(DelayedStartArrowInput());
+    }
+
+    private IEnumerator DelayedStartArrowInput()
+    {
+        yield return null; // 한 프레임 기다림 → Destroy 반영됨
+        StartArrowInput(spawnArrow);
     }
 
     private void FailInput()
@@ -164,6 +167,13 @@ public class ArrowSystem : MonoBehaviour
         ClearArrow();
         arrowTimer.gameObject.SetActive(false);
         Debug.Log("실패");
+        StartCoroutine(DelayedFailInput());
+    }
+
+    private IEnumerator DelayedFailInput()
+    {
+        yield return new WaitForSeconds(2f); // 한 프레임 기다림 → Destroy 반영됨
+        StartArrowInput(spawnArrow);
     }
 
     /// <summary>
