@@ -180,11 +180,7 @@ public class ArrowSystem : MonoBehaviour
         GetCustomer();
         currentKey = 0;
         isActive = true;
-
-
     }
-
-
 
     // TODO : 추후 (0,7)로 수정할 것
     public int ChangeCustomerSprite()
