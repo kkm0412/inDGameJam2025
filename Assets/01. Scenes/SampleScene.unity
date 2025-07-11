@@ -289,8 +289,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemyBombPrefab: {fileID: 99332992095375057, guid: 322f3a9259f7ef14c9c9b9e4e3db2ee6, type: 3}
-  attackPrePareTimeMin: 3
-  attackPrePareTimeMax: 5
+  attackPrePareTimeMin: 3.1
+  attackPrePareTimeMax: 6.2
   attackComingTime: 3
   parryTime: 1
 --- !u!4 &539525730
