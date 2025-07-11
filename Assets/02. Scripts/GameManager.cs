@@ -9,22 +9,22 @@ public class GameManager : MonoBehaviour
     public static Action<int> OnHpChanged;
     private ArrowSystem arrowSystem;
 
-    // ÇÃ·¹ÀÌ¾îÀÇ Ã¼·Â
+    // í”Œë ˆì´ì–´ì˜ ì²´ë ¥
     [SerializeField]
     private int playerHp = 100;
     private int PlayerHp => playerHp;
 
-    // ÇÃ·¹ÀÌ¾î Ã¼·Â È¸º¹ ¹üÀ§ (¿¹: 1~3)
+    // í”Œë ˆì´ì–´ ì²´ë ¥ íšŒë³µ ë²”ìœ„ (ì˜ˆ: 1~3)
     [SerializeField]
     private int playerHeal = 1;
     private int PlayerHeal => playerHeal;
 
     [SerializeField]
-    // ÇÃ·¹ÀÌ¾î ÆøÅºÀÇ µ¥¹ÌÁö ¹üÀ§ (¿¹: 5~10)
+    // í”Œë ˆì´ì–´ í­íƒ„ì˜ ë°ë¯¸ì§€ ë²”ìœ„ (ì˜ˆ: 5~10)
     private int playerBombDamage = 5;
     private int PlayerBombDamage => playerBombDamage;
 
-    // ÆøÅº »ç¿ë ÄğÅ¸ÀÓ (ÃÊ)
+    // í­íƒ„ ì‚¬ìš© ì¿¨íƒ€ì„ (ì´ˆ)
     [SerializeField]
     private float playerBombCooldown = 10f;
     private float PlayerBombCooldown => playerBombCooldown;
@@ -33,11 +33,11 @@ public class GameManager : MonoBehaviour
     private int combo = 0;
     public int Combo => combo;
 
-    // °¢ ½ºÅ×ÀÌÁö Á¦ÇÑ ½Ã°£ (ÃÊ)
+    // ê° ìŠ¤í…Œì´ì§€ ì œí•œ ì‹œê°„ (ì´ˆ)
     public float stageTimeLimit = 120f;
     public float leftStageTime { get; private set; }
 
-    // °ÔÀÓ ½ÃÀÛ ½ÃÀÇ ½ºÅ×ÀÌÁö ·¹º§ (0ºÎÅÍ ½ÃÀÛ ¾Æ´Ô, 1ºÎÅÍ ½ÃÀÛ)
+    // ê²Œì„ ì‹œì‘ ì‹œì˜ ìŠ¤í…Œì´ì§€ ë ˆë²¨ (0ë¶€í„° ì‹œì‘ ì•„ë‹˜, 1ë¶€í„° ì‹œì‘)
     public int nowStage = 2;
 
     public bool stageStart = false;
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         OnHpChanged?.Invoke(playerHp);
-        arrowSystem.customerImage.gameObject.SetActive(false);
+        arrowSystem.customer.gameObject.SetActive(false);
         StartCoroutine(GameStart());
     }
     // Update is called once per frame
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         GameManager.Instance.stageStart = true;
-        arrowSystem.customerImage.gameObject.SetActive(true);
+        arrowSystem.customer.gameObject.SetActive(true);
         arrowSystem.StartArrowInput();
     }
 
@@ -108,12 +108,12 @@ public class GameManager : MonoBehaviour
 
     void GameOver()
     {
-        Debug.Log("°ÔÀÓ ¿À¹ö");
+        Debug.Log("ê²Œì„ ì˜¤ë²„");
         arrowSystem.StopInput();
     }
 
     void StageEnd()
     {
-        Debug.Log("½ºÅ×ÀÌÁö Á¾·á");
+        Debug.Log("ìŠ¤í…Œì´ì§€ ì¢…ë£Œ");
     }
 }
