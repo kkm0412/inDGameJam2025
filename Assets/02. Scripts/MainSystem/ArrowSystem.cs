@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
 
 public class ArrowSystem : MonoBehaviour
 {
-    public enum ArrowKey { Left, Right, Down, Up };
+    public enum ArrowKey { Left, Right, Down, Up, Space };
 
     public int spawnArrow;
+    public GameObject playerHand;
     public GameObject arrowPrefab;
     public Transform arrowParent;
+
+    public GameObject customer;
+    public GameObject waitingcustomer;
+    public GameObject waitingCustomer2;
+    public GameObject createBread;
+
+    public bool isReverse;
+
     public float spacing = 100f;
     public float limitTime = 5f;
     public Slider arrowTimer;
@@ -18,12 +28,18 @@ public class ArrowSystem : MonoBehaviour
     private List<ArrowKey> sequence = new();
     private int currentKey = 0;
     private bool isActive = false;
+    private Queue<int> customerQueue = new Queue<int>();
+    private List<int> customerIndexList = new List<int>();
 
     private PlayerInput inputActions;
+    private Animator animator;
+    private SpriteRenderer sr;
 
     private void Awake()
     {
         inputActions = new PlayerInput();
+        animator = playerHand.GetComponent<Animator>();
+        sr = playerHand.GetComponent<SpriteRenderer>();
     }
 
     private void OnEnable()
@@ -34,6 +50,7 @@ public class ArrowSystem : MonoBehaviour
         inputActions.GamePlay.InputDown.performed += ctx => CheckInput(ArrowKey.Down);
         inputActions.GamePlay.InputLeft.performed += ctx => CheckInput(ArrowKey.Left);
         inputActions.GamePlay.InputRight.performed += ctx => CheckInput(ArrowKey.Right);
+        inputActions.GamePlay.InputSpace.performed += ctx => CheckInput(ArrowKey.Space);
     }
 
     private void OnDisable()
@@ -45,6 +62,11 @@ public class ArrowSystem : MonoBehaviour
     {
         arrowTimer.gameObject.SetActive(false);
         arrowTimer.maxValue = limitTime;
+
+        for (int i = 0; i < 3; i++)
+        {
+            customerIndexList.Add(ChangeCustomerSprite());
+        }
     }
 
     private void Update()
@@ -58,79 +80,194 @@ public class ArrowSystem : MonoBehaviour
                 FailInput();
             }
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+    private ArrowKey GetOpposite(ArrowKey key)
+    {
+        return key switch
         {
-            StartArrowInput(spawnArrow);
-        }
+            ArrowKey.Left => ArrowKey.Right,
+            ArrowKey.Right => ArrowKey.Left,
+            ArrowKey.Up => ArrowKey.Down,
+            ArrowKey.Down => ArrowKey.Up,
+            _ => key // SpaceëŠ” ë°˜ëŒ€ ì—†ìŒ
+        };
     }
 
     /// <summary>
-    /// È­»ìÇ¥ »ı¼º ¹× ÀÔ·Â ½ÃÄı½º¸¦ ½ÃÀÛÇÕ´Ï´Ù
+    /// í™”ì‚´í‘œ ìƒì„± ë° ì…ë ¥ ì‹œí€¸ìŠ¤ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤
     /// </summary>
-    /// <param name="count">»ı¼ºÇÒ È­»ìÇ¥ÀÇ °³¼ö</param>
-    public void StartArrowInput(int count)
+    /// <param name="count">ìƒì„±í•  í™”ì‚´í‘œì˜ ê°œìˆ˜</param>
+    public void StartArrowInput()
     {
+        int nowStage = GameManager.Instance.nowStage;
+        int count = 0;
         ClearArrow();
+
+        animator.enabled = true; // ëŒ€ê¸° ì• ë‹ˆë©”ì´ì…˜ í™œì„±í™”
+
+        if (nowStage < 3)
+        {
+            isReverse = false;
+        }
+        else
+        {
+            isReverse = Random.value < 0.3f;
+        }
+        Debug.Log(isReverse);
+
+        if (nowStage == 1)
+        {
+            count = 6;
+        }
+        else if (nowStage == 2)
+        {
+            count = 7;
+        }
+        else if (nowStage == 3)
+        {
+            if (isReverse)
+            {
+                count = 5;
+            }
+            else
+            {
+                count = 8;
+            }
+        }
         arrowTimer.gameObject.SetActive(true);
         currentTime = limitTime;
-        for (int i = 0; i < count; i++)
+        // ì •ë°©í–¥ + ìŠ¤í˜ì´ìŠ¤
+        if (!isReverse && nowStage >= 2)
         {
-            sequence.Add((ArrowKey)Random.Range(0, 4));
-            GameObject arrow = Instantiate(arrowPrefab, arrowParent);
-            arrow.name = i.ToString();
-            Transform child = arrow.transform.Find("Arrow");
-            child.GetComponent<Image>().sprite = CreateArrow(sequence[i]);
+            for (int i = 0; i < count; i++)
+            {
+                sequence.Add((ArrowKey)Random.Range(0, 5));
+                GameObject arrow = Instantiate(arrowPrefab, arrowParent);
+                arrow.name = i.ToString();
+                Transform child = arrow.transform.Find("Arrow");
+                CreateArrow(sequence[i], child);
+            }
         }
+        // ì •ë°©í–¥
+        else if (!isReverse && nowStage == 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Debug.Log("ì •ë°©í–¥");
+                sequence.Add((ArrowKey)Random.Range(0, 4));
+                GameObject arrow = Instantiate(arrowPrefab, arrowParent);
+                arrow.name = i.ToString();
+                Transform child = arrow.transform.Find("Arrow");
+                CreateArrow(sequence[i], child);
+            }
+        }
+        // ì—­ë°©í–¥
+        else if (isReverse && nowStage >= 3)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                sequence.Add((ArrowKey)Random.Range(0, 4));
+                GameObject arrow = Instantiate(arrowPrefab, arrowParent);
+                arrow.name = i.ToString();
+                Transform child = arrow.transform.Find("Arrow");
+                CreateArrow(sequence[i], child);
+            }
+        }
+
         ArrangeChildrenCentered();
+        ClearCustomer();
+        GetCustomer();
         currentKey = 0;
         isActive = true;
+    }
 
-
+    // TODO : ì¶”í›„ (0,7)ë¡œ ìˆ˜ì •í•  ê²ƒ
+    public int ChangeCustomerSprite()
+    {
+        return Random.Range(0, 4);
     }
 
     /// <summary>
-    /// »ı¼ºµÈ È­»ìÇ¥ÀÇ key¿¡ ¸Â°Ô Resources Æú´õ¿¡¼­ È­»ìÇ¥ sprite¸¦ °¡Á®¿È
+    /// ìƒì„±ëœ í™”ì‚´í‘œì˜ keyì— ë§ê²Œ Resources í´ë”ì—ì„œ í™”ì‚´í‘œ spriteë¥¼ ê°€ì ¸ì˜´
     /// </summary>
-    /// <param name="key">¸®¼Ò½º¸¦ ºÒ·¯¿Ã È­»ìÇ¥ enum</param>
-    /// <returns>ÀÔ·Â¹ŞÀº Å°¿¡ ¸Â´Â Sprite</returns>
-    private Sprite CreateArrow(ArrowKey key)
+    /// <param name="key">ë¦¬ì†ŒìŠ¤ë¥¼ ë¶ˆëŸ¬ì˜¬ í™”ì‚´í‘œ enum</param>
+    /// <returns>ì…ë ¥ë°›ì€ í‚¤ì— ë§ëŠ” Sprite</returns>
+    private void CreateArrow(ArrowKey key, Transform child)
     {
         string path = $"Arrows/{key}Arrow";
+        Sprite arrowSprite = Resources.Load<Sprite>(path);
+
+        child.GetComponent<Image>().sprite = arrowSprite;
+
+        if (key == ArrowKey.Left)
+        {
+            child.GetComponent<Image>().color = Color.red;
+        }
+        else if (key == ArrowKey.Right)
+        {
+            child.GetComponent<Image>().color = Color.green;
+        }
+        else if (key == ArrowKey.Up)
+        {
+            child.GetComponent<Image>().color = Color.blue;
+        }
+        else if (key == ArrowKey.Down)
+        {
+            child.GetComponent<Image>().color = Color.yellow;
+        }
+    }
+
+    private void GetCustomer()
+    {
+        customer.transform.GetChild(customerIndexList[0]).gameObject.SetActive(true);
+        waitingcustomer.transform.GetChild(customerIndexList[1]).gameObject.SetActive(true);
+        waitingCustomer2.transform.GetChild(customerIndexList[2]).gameObject.SetActive(true);
+    }
+
+    private Sprite GetMixHandSprite(string index)
+    {
+        string path = $"MixHand/{index}";
         return Resources.Load<Sprite>(path);
     }
 
     /// <summary>
-    /// ÀÔ·Â¹ŞÀº Å°°¡ »ı¼ºµÈ È­»ìÇ¥¿Í °°Àº Å°ÀÎÁö È®ÀÎÇÑ´Ù,
+    /// ì…ë ¥ë°›ì€ í‚¤ê°€ ìƒì„±ëœ í™”ì‚´í‘œì™€ ê°™ì€ í‚¤ì¸ì§€ í™•ì¸í•œë‹¤,
     /// </summary>
-    /// <returns>»ı¼ºµÈ È­»ìÇ¥¿Í °°Àº Å°¸¦ ÀÔ·Â¹ŞÀ¸¸é true, ´Ù¸¥ Å°¸¦ ÀÔ·Â¹ŞÀ¸¸é false</returns>
+    /// <returns>ìƒì„±ëœ í™”ì‚´í‘œì™€ ê°™ì€ í‚¤ë¥¼ ì…ë ¥ë°›ìœ¼ë©´ true, ë‹¤ë¥¸ í‚¤ë¥¼ ì…ë ¥ë°›ìœ¼ë©´ false</returns>
     private void CheckInput(ArrowKey key)
     {
         if (!isActive) return;
 
-        if (key == sequence[currentKey])
+        ArrowKey expected = sequence[currentKey];
+        ArrowKey correctInput = isReverse ? GetOpposite(expected) : expected;
+
+        if (key == correctInput)
         {
+            // ì„±ê³µ ì²˜ë¦¬
+            animator.enabled = false; // ì• ë‹ˆë©”ì´ì…˜ ë¹„í™œì„±í™”
+            sr.sprite = GetMixHandSprite(key.ToString());
             arrowParent.Find(currentKey.ToString()).gameObject.SetActive(false);
             currentKey++;
+            SoundManager.Instance.PlaySound(0); // ì‚¬ìš´ë“œ ì¬ìƒ
             if (currentKey >= sequence.Count)
-            {
                 SuccessInput();
-            }
         }
         else
         {
+            // ì‹¤íŒ¨ ì²˜ë¦¬
+            animator.enabled = true; // ì• ë‹ˆë©”ì´ì…˜ í™œì„±í™”
+            SoundManager.Instance.PlaySound(1); // ì‚¬ìš´ë“œ ì¬ìƒ
+            Debug.Log("í‹€ë¦¼");
             currentKey = 0;
-            for (int i = 0; i < spawnArrow; i++)
-            {
-                Transform child = arrowParent.GetChild(i);
-                child.gameObject.SetActive(true);
-            }
+            for (int i = 0; i < sequence.Count; i++)
+                arrowParent.GetChild(i).gameObject.SetActive(true);
         }
     }
 
 
     /// <summary>
-    /// »ı¼ºµÈ È­»ìÇ¥¸¦ Áß¾ÓÀ» ±âÁØÀ¸·Î °£°İÀÌ spacingÀÌ µÇµµ·Ï ¹èÄ¡
+    /// ìƒì„±ëœ í™”ì‚´í‘œë¥¼ ì¤‘ì•™ì„ ê¸°ì¤€ìœ¼ë¡œ ê°„ê²©ì´ spacingì´ ë˜ë„ë¡ ë°°ì¹˜
     /// </summary>
     private void ArrangeChildrenCentered()
     {
@@ -145,39 +282,67 @@ public class ArrowSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇöÀç ÁøÇà ÁßÀÎ È­»ìÇ¥ »ı¼º ¹× ÀÔ·Â ½ÃÄı½ºÀÇ ¸ğµç È­»ìÇ¥¸¦ ¼ø¼­´ë·Î ÀÔ·ÂÇÏ¿©, ¼º°ø Ã³¸®
+    /// í˜„ì¬ ì§„í–‰ ì¤‘ì¸ í™”ì‚´í‘œ ìƒì„± ë° ì…ë ¥ ì‹œí€¸ìŠ¤ì˜ ëª¨ë“  í™”ì‚´í‘œë¥¼ ìˆœì„œëŒ€ë¡œ ì…ë ¥í•˜ì—¬, ì„±ê³µ ì²˜ë¦¬
     /// </summary>
     private void SuccessInput()
     {
+        animator.enabled = true; // ì• ë‹ˆë©”ì´ì…˜ í™œì„±í™”
+        int increHp = GameManager.Instance.Combo + 1;
+        GameManager.Instance.IncreCombo();
         isActive = false;
         ClearArrow();
-        Debug.Log("¼º°ø");
+        Debug.Log("ì„±ê³µ");
+        GameManager.Instance.TakeDamage(-increHp);
+        createBread.SetActive(true);
+        createBread.GetComponent<Animator>().Play("breadEffect Animation");
+        SoundManager.Instance.PlaySound(2); // ì‚¬ìš´ë“œ ì¬ìƒ
         StartCoroutine(DelayedStartArrowInput());
     }
 
     private IEnumerator DelayedStartArrowInput()
     {
-        yield return null; // ÇÑ ÇÁ·¹ÀÓ ±â´Ù¸² ¡æ Destroy ¹İ¿µµÊ
-        StartArrowInput(spawnArrow);
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Animator>().enabled = false;
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Customers/Customer{customerIndexList[0]}_3");
+        yield return new WaitForSeconds(2f); // í•œ í”„ë ˆì„ ê¸°ë‹¤ë¦¼ â†’ Destroy ë°˜ì˜ë¨
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Animator>().enabled = true;
+        customerIndexList.RemoveAt(0);
+        customerIndexList.Add(ChangeCustomerSprite());
+        createBread.SetActive(false);
+        StartArrowInput();
     }
 
     private void FailInput()
     {
+        animator.enabled = true; // ì• ë‹ˆë©”ì´ì…˜ í™œì„±í™”
+        GameManager.Instance.ResetCombo();
         isActive = false;
         ClearArrow();
         arrowTimer.gameObject.SetActive(false);
-        Debug.Log("½ÇÆĞ");
+        Debug.Log("ì‹¤íŒ¨");
+        SoundManager.Instance.PlaySound(3); // ì‚¬ìš´ë“œ ì¬ìƒ
         StartCoroutine(DelayedFailInput());
+    }
+
+    public void StopInput()
+    {
+        isActive = false;
+        ClearArrow();
+        arrowTimer.gameObject.SetActive(false);
     }
 
     private IEnumerator DelayedFailInput()
     {
-        yield return new WaitForSeconds(2f); // ÇÑ ÇÁ·¹ÀÓ ±â´Ù¸² ¡æ Destroy ¹İ¿µµÊ
-        StartArrowInput(spawnArrow);
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Animator>().enabled = false;
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Customers/Customer{customerIndexList[0]}_4");
+        yield return new WaitForSeconds(2f); // í•œ í”„ë ˆì„ ê¸°ë‹¤ë¦¼ â†’ Destroy ë°˜ì˜ë¨
+        customer.transform.GetChild(customerIndexList[0]).gameObject.GetComponent<Animator>().enabled = true;
+        customerIndexList.RemoveAt(0);
+        customerIndexList.Add(ChangeCustomerSprite());
+        StartArrowInput();
     }
 
     /// <summary>
-    /// »ı¼ºµÈ È­»ìÇ¥¸¦ ÀüºÎ Á¦°Å
+    /// ìƒì„±ëœ í™”ì‚´í‘œë¥¼ ì „ë¶€ ì œê±°
     /// </summary>
     public void ClearArrow()
     {
@@ -185,5 +350,18 @@ public class ArrowSystem : MonoBehaviour
             Destroy(child.gameObject);
 
         sequence.Clear();
+    }
+    
+    /// <summary>
+    /// ëª¨ë“  ê³ ê°ë“¤ì˜ ì˜¤ë¸Œì íŠ¸ë¥¼ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
+    /// </summary>
+    private void ClearCustomer()
+    {
+        for (int i = 0; i < customer.transform.childCount; i++)
+        {
+            customer.transform.GetChild(i).gameObject.SetActive(false);
+            waitingcustomer.transform.GetChild(i).gameObject.SetActive(false);
+            waitingCustomer2.transform.GetChild(i).gameObject.SetActive(false);
+        }
     }
 }
