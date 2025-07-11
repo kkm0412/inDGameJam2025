@@ -9,6 +9,7 @@ namespace Enemy
     //적이 공격을 하기 위한 시스템.
     public class EnemyAttackController : MonoBehaviour
     {
+        [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
         [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
         [SerializeField] private float attackPrePareTimeMax;    //적 공격 준비시간 최대
         private float attackPrepareTime;    //적이 공격준비하는 시간, 랜덤으로 지정
@@ -36,6 +37,9 @@ namespace Enemy
 
                 Debug.Log("공격 시작");
                 //여기다가 UI상에서 공격이 날라가는 메서드 적용
+                GameObject enemyBomb = Instantiate(EnemyBombPrefab);
+                enemyBomb.GetComponent<EnemyBomb>().SetTime(attackComingTime, parryTime);
+                //
                 yield return new WaitForSeconds(attackComingTime);
 
                 Debug.Log("공격이 바로 앞까지 옴");
