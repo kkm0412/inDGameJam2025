@@ -7,7 +7,7 @@ public class Stage : MonoBehaviour
 {
     public static Stage Instance { get; private set; }
 
-    public StageDatabase[] stageBase;
+    public StageDatabase stageBase;
     private StageData stageData;
 
     bool stageStart = false;
@@ -27,7 +27,7 @@ public class Stage : MonoBehaviour
         }
     }
     
-    public void InitStageData(StageDatabase data)
+    private void InitStageData(StageDatabase data)
     {
         stageData = new StageData(data);
     }
@@ -39,7 +39,9 @@ public class Stage : MonoBehaviour
 
     private void Start()
     {
+        InitStageData(stageBase);
         OnEnemyHpChanged?.Invoke(GetStageData().enemyHp);
+
     }
 
     private void Update()
