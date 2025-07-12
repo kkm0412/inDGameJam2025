@@ -15,11 +15,16 @@ public class ArrowSystem : MonoBehaviour
     public Transform arrowParent;
 
     public EnemyAttackController enemyAttackController;
+    public GameObject throwBackGround;
+    public Image enemySprite;
+    public Animator explosiveAnim;
+    public Animator enemyDieEffect;
 
     public GameObject customer;
     public GameObject waitingcustomer;
     public GameObject waitingCustomer2;
     public GameObject createBread;
+    public GameObject arrowBackground;
 
     public bool isReverse;
 
@@ -39,12 +44,14 @@ public class ArrowSystem : MonoBehaviour
 
     private Animator animator;
     public Animator Anim => animator;
+
     private SpriteRenderer sr;
 
     private void Awake()
     {
         animator = playerHand.GetComponent<Animator>();
         sr = playerHand.GetComponent<SpriteRenderer>();
+        throwBackGround.SetActive(false);
     }
 
     private void Start()
@@ -100,13 +107,14 @@ public class ArrowSystem : MonoBehaviour
     /// <param name="count">생성할 화살표의 개수</param>
     public void StartArrowInput()
     {
-        
+
         int nowStage = GameManager.Instance.nowStage;
         int count = 0;
         ClearArrow();
 
         animator.enabled = true; // 대기 애니메이션 활성화
 
+        arrowBackground.SetActive(true);
         if (nowStage < 3)
         {
             isReverse = false;
@@ -241,7 +249,7 @@ public class ArrowSystem : MonoBehaviour
         {
             return null;
         }
-            
+
     }
 
     /// <summary>
@@ -307,25 +315,83 @@ public class ArrowSystem : MonoBehaviour
         animator.enabled = true; // 애니메이션 활성화
         int increHp = GameManager.Instance.Combo + 1;
         GameManager.Instance.IncreCombo();
-        
+
         ClearArrow();
         Debug.Log("성공");
+        arrowBackground.SetActive(false);
         GameManager.Instance.TakeDamage(-increHp);
         if (isBombReady)
         {
+            throwBackGround.SetActive(true);
             animator.SetTrigger("Throw");
             isBombReady = false;
             leftBombCooldown = bombCooldown;
+            StartCoroutine(DelayThrow());
 
         }
         else
         {
             createBread.SetActive(true);
             createBread.GetComponent<Animator>().Play("breadEffect Animation");
-        }           
+        }
         SoundManager.Instance.PlaySound(2); // 사운드 재생
         isActive = false;
         StartCoroutine(DelayedStartArrowInput());
+    }
+
+    IEnumerator DelayThrow()
+    {
+        arrowTimer.gameObject.SetActive(false);
+        yield return new WaitForSeconds(1f);
+        explosiveAnim.Play("enemyhit Animation");
+        Stage.Instance.TakeDamage(60);
+        explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
+        enemySprite.sprite = GetEnemySprite();
+        explosiveAnim.enabled = true;
+        if (Stage.Instance.GetStageData().enemyHp > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            arrowTimer.gameObject.SetActive(true);
+            throwBackGround.SetActive(false);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
+            enemyDieEffect.enabled = true;
+            enemyAttackController.StopAllCoroutines();
+            Stage.Instance.StopAllCoroutines();
+            StopCoroutine(DelayedStartArrowInput());
+            StopInput();
+            arrowBackground.SetActive(false);
+            yield return new WaitForSeconds(1f);
+            enemyDieEffect.gameObject.SetActive(false);
+            Debug.Log("적 사망2");
+                     
+        }
+    }
+    private Sprite GetEnemySprite()
+    {
+        int index = 0;
+        if (Stage.Instance.GetStageData().enemyHp <= 0)
+        {
+            index = 3;
+        }
+        else if (Stage.Instance.GetStageData().enemyHp <= Mathf.FloorToInt(Stage.Instance.GetStageData().enemyStartHp * 0.5f))
+        {
+            index = 2;
+        }
+        else
+        {
+            index = 1;
+        }
+        string path = $"EnemySprite/Enemy{GameManager.Instance.nowStage}_{index}";
+        Debug.Log(Resources.Load<Sprite>(path).name);
+        return Resources.Load<Sprite>(path);
     }
 
     private IEnumerator DelayedStartArrowInput()
@@ -346,6 +412,7 @@ public class ArrowSystem : MonoBehaviour
         GameManager.Instance.ResetCombo();
         isActive = false;
         ClearArrow();
+        arrowBackground.SetActive(false);
         arrowTimer.gameObject.SetActive(false);
         Debug.Log("실패");
         SoundManager.Instance.PlaySound(3); // 사운드 재생
@@ -380,7 +447,7 @@ public class ArrowSystem : MonoBehaviour
 
         sequence.Clear();
     }
-    
+
     /// <summary>
     /// 모든 고객들의 오브젝트를 비활성화합니다.
     /// </summary>
