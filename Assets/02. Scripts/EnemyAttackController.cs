@@ -131,7 +131,7 @@ public class EnemyAttackController : MonoBehaviour
                     arrowSystem.Anim.SetTrigger("RightParrying");
                     isParrying = true; 
                     StartCoroutine(IsParrying());
-                    isParryAble = true;
+                    isParrySuccess = true;
                 }
                 else
                 {
