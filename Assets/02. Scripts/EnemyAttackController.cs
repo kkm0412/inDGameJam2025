@@ -10,6 +10,9 @@ using UnityEngine.XR;
 public class EnemyAttackController : MonoBehaviour
 {
     EnemyAttackWarning attackWarning;
+
+    public ArrowSystem arrowSystem;
+
     private int atkDirection = 0; //0일시 좌, 1일시 우
     [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
@@ -22,6 +25,7 @@ public class EnemyAttackController : MonoBehaviour
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
     private bool isTryParry = false; //패링 시도 유무(패링 효과 관리용)
+    public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
     void Start()
@@ -99,6 +103,9 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 0)
                 {
                     Debug.Log("좌 패링 성공");
+                    isParrying = true;
+                    arrowSystem.Anim.SetTrigger("LeftParrying");
+                    StartCoroutine(IsParrying());
                     isParrySuccess = true;
                 }
                 else
@@ -115,6 +122,9 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 1)
                 {
                     Debug.Log("우 패링 성공");
+                    isParrying = true;
+                    arrowSystem.Anim.SetTrigger("RightParrying");
+                    StartCoroutine(IsParrying());
                     isParryAble = true;
                 }
                 else
@@ -127,6 +137,13 @@ public class EnemyAttackController : MonoBehaviour
             }
         }
     }
+
+    IEnumerator IsParrying()
+    {
+        yield return new WaitForSeconds(1.2f);
+        isParrying = false;
+    }
+
     /// <summary>
     /// 패링 시도시 패링 경고 효과 끊기
     /// </summary>
