@@ -8,4 +8,9 @@ public class PlayOneShot : MonoBehaviour
     {
         this.gameObject.transform.GetChild(0).gameObject.GetComponent<AudioSource>().PlayOneShot(this.gameObject.transform.GetChild(0).gameObject.GetComponent<AudioSource>().clip);
     }
+
+    public void PlaySFX(int num)
+    {
+        SoundManager.Instance.PlaySound(num);
+    }
 }

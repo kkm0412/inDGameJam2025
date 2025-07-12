@@ -312,7 +312,7 @@ public class ArrowSystem : MonoBehaviour
         else
         {
             currentKey = 0;
-            for (int i = 0; i < spawnArrow; i++)
+            for (int i = 0; i < arrowParent.childCount; i++)
             {
                 GameObject arrowObj = arrowParent.GetChild(i).gameObject;
 
@@ -330,6 +330,7 @@ public class ArrowSystem : MonoBehaviour
                 Color baseColor = img.color;
                 img.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
             }
+            SoundManager.Instance.PlaySound(1); // 사운드 재생
         }
     }
     

@@ -148,6 +148,7 @@ public class GameManager : MonoBehaviour
     public void StageEnd()
     {
         clearUI.SetActive(true);
+        SoundManager.Instance.PlaySound(9);
         Debug.Log("스테이지 종료");
     }
 
@@ -158,6 +159,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator NextStageFadeOut()
     {
+        SoundManager.Instance.backgroundAudioSource.Stop();
         fadeOutBlack.SetActive(true);
         fadeOutBlack.GetComponent<Animator>().enabled = true;
         yield return new WaitForSeconds(1.3f);
@@ -167,7 +169,9 @@ public class GameManager : MonoBehaviour
         clearUI.SetActive(false);
         TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
         leftStageTime = stageTimeLimit; // 스테이지 시간 초기화
-        nowStage += 1;     
+        this.gameObject.GetComponent<UIManager>().stageTimer.text = "02:00";
+        nowStage += 1;
+        SoundManager.Instance.PlayBackgroundMusic(nowStage);
         DialogManager.Instance.AppearDialogUI();
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
     }
