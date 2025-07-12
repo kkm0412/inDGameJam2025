@@ -11,7 +11,7 @@ public class StageDatabase : ScriptableObject
     public int stageLevel = 1;
 
     // 적의 체력
-    public int enemyHP = 100;
+    public int enemyHp = 100;
 
     // 적 체력 회복 간격 (초)
     public float enemyHealInterval = 2f;
@@ -20,9 +20,9 @@ public class StageDatabase : ScriptableObject
     public int enemyHealAmount = 1;
 
     // 적 폭탄의 데미지 범위 (예: 5~10)
-    public int enemyBombDamageRange = 5;
+    public int enemyBombDamage = 5;
 
     // 이 스테이지를 클리어했을 때 플레이어에게 추가되는 체력
-    public int playerHPBonusOnClear = 100;
+    public int playerHpBonusOnClear = 100;
 
 }
