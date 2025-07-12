@@ -533,7 +533,7 @@ MonoBehaviour:
   playerBombCooldown: 10
   combo: 0
   stageTimeLimit: 120
-  nowStage: 2
+  nowStage: 1
   stageStart: 0
 --- !u!114 &124712917
 MonoBehaviour:
@@ -1626,7 +1626,9 @@ MonoBehaviour:
   arrowParent: {fileID: 2006861939}
   enemyAttackController: {fileID: 124756434}
   throwBackGround: {fileID: 1190174296}
+  enemySprite: {fileID: 1300281345}
   explosiveAnim: {fileID: 606235615}
+  enemyDieEffect: {fileID: 469995079}
   customer: {fileID: 1207402493}
   waitingcustomer: {fileID: 377316795}
   waitingCustomer2: {fileID: 1039455066}
@@ -1725,7 +1727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &469995078
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1753,7 +1755,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469995077}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 53e4d656f6c468c4987be1ec4628e817, type: 2}
   m_CullingMode: 0
@@ -1773,7 +1775,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469995077}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

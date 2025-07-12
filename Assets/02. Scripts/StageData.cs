@@ -8,6 +8,7 @@ public class StageData
     private StageDatabase stageData;
     public string stageName;
     public int stageLevel;
+    public int enemyStartHp;
     public int enemyHp;
     public float enemyHealInterval;
     public int enemyHealAmount;
@@ -19,6 +20,7 @@ public class StageData
         this.stageData = stageData;
         this.stageName = this.stageData.stageName;
         this.stageLevel = this.stageData.stageLevel;
+        this.enemyStartHp = this.stageData.enemyHp;
         this.enemyHp = this.stageData.enemyHp;
         this.enemyHealInterval = this.stageData.enemyHealInterval;
         this.enemyHealAmount = this.stageData.enemyHealAmount;
