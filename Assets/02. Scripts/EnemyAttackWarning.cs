@@ -71,7 +71,7 @@ public class EnemyAttackWarning : MonoBehaviour
         Debug.Log($"[위험] 경고 방향 {dir}에서 최대 밝기에 도달!");
 
         // 일정 시간 후 자동 비활성화
-        StartCoroutine(HideCriticalWarningEffect(dir, 3.8f));
+        StartCoroutine(HideCriticalWarningEffect(dir, 4.0f));
     }
 
     private IEnumerator HideCriticalWarningEffect(int dir, float delay)
@@ -91,40 +91,45 @@ public class EnemyAttackWarning : MonoBehaviour
         Color color = warning[warnDir].color;
         float alphaMax = 0.6f;
         float warnSensitivity = 1f / (warnTime - 0.1f) * alphaMax;
+        Debug.Log($"[WarnEffect] 민감도: {warnSensitivity}");
 
-        Debug.Log(warnSensitivity);
-
+        float elapsed = 0f;
+        float triggerTime = 1.5f; // 깜빡이 시작 후 0.3초 뒤에 이펙트 실행
         bool hasShownEffect = false;
 
-        // 첫 점점 밝아지는 구간
+        // 1단계: 점점 밝아짐
         while (color.a < alphaMax)
         {
-            color.a += warnSensitivity * Time.deltaTime;
+            elapsed += Time.deltaTime;
 
-            // 특정 밝기 이상일 때 효과 실행 (한 번만)
-            if (!hasShownEffect && color.a >= 0.5f)
+            if (elapsed >= triggerTime && !hasShownEffect)
             {
                 ShowCriticalWarningEffect(warnDir);
                 hasShownEffect = true;
             }
 
+            color.a += warnSensitivity * Time.deltaTime;
             warning[warnDir].color = color;
             yield return null;
         }
 
-        // 반복되는 깜빡임
+        // 2단계: 점점 어두워짐
         while (color.a > 0)
         {
             color.a -= warnSensitivity * Time.deltaTime;
             warning[warnDir].color = color;
             yield return null;
         }
+
+        // 3단계: 다시 점점 밝아짐
         while (color.a < alphaMax)
         {
             color.a += warnSensitivity * Time.deltaTime;
             warning[warnDir].color = color;
             yield return null;
         }
+
+        // 4단계: 다시 점점 어두워짐
         while (color.a > 0)
         {
             color.a -= warnSensitivity * Time.deltaTime;
@@ -134,6 +139,7 @@ public class EnemyAttackWarning : MonoBehaviour
 
         yield return null;
     }
+
 
     /*
         IEnumerator WarnEffectBlink(int warnDir, float warnTime)

@@ -268,29 +268,53 @@ public class ArrowSystem : MonoBehaviour
         // 폭탄일 경우 폭탄 애니메이션 재생
         if (key == correctInput)
         {
-            // 성공 처리
             animator.enabled = false; // 애니메이션 비활성화
+
+            Transform arrowTransform = arrowParent.Find(currentKey.ToString());
+
+            if (arrowTransform != null)
+            {
+                StartCoroutine(FadeOutAndShrink(arrowTransform.gameObject));
+            }
+
             if (GetMixHandSprite(key.ToString()) != null)
             {
                 sr.sprite = GetMixHandSprite(key.ToString());
             }
-            arrowParent.Find(currentKey.ToString()).gameObject.SetActive(false);
+
             currentKey++;
             SoundManager.Instance.PlaySound(0); // 사운드 재생
+
             if (currentKey >= sequence.Count)
                 SuccessInput();
         }
-        else
-        {
-            // 실패 처리
-            animator.enabled = true; // 애니메이션 활성화
-            SoundManager.Instance.PlaySound(1); // 사운드 재생
-            Debug.Log("틀림");
-            currentKey = 0;
-            for (int i = 0; i < sequence.Count; i++)
-                arrowParent.GetChild(i).gameObject.SetActive(true);
-        }
     }
+
+    private IEnumerator FadeOutAndShrink(GameObject target)
+    {
+        float duration = 0.3f;
+        float time = 0f;
+
+        Image img = target.transform.Find("Arrow").GetComponent<Image>();
+        Vector3 startScale = target.transform.localScale;
+        Color startColor = img.color;
+
+        while (time < duration)
+        {
+            if (target == null || img == null) yield break; // 중간에 파괴되면 종료
+
+            float t = time / duration;
+            target.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            img.color = Color.Lerp(startColor, new Color(startColor.r, startColor.g, startColor.b, 0f), t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        if (target != null)
+            target.SetActive(false);
+    }
+
+
 
 
     /// <summary>
@@ -298,15 +322,23 @@ public class ArrowSystem : MonoBehaviour
     /// </summary>
     private void ArrangeChildrenCentered()
     {
-        int count = arrowParent.childCount;
+        List<Transform> activeChildren = new();
+
+        foreach (Transform child in arrowParent)
+        {
+            if (child.gameObject.activeSelf)
+                activeChildren.Add(child);
+        }
+
+        int count = activeChildren.Count;
         float startX = -((count - 1) * spacing) / 2f;
 
         for (int i = 0; i < count; i++)
         {
-            Transform child = arrowParent.GetChild(i);
-            child.localPosition = new Vector3(startX + i * spacing, 0f, 0f);
+            activeChildren[i].localPosition = new Vector3(startX + i * spacing, 0f, 0f);
         }
     }
+
 
     /// <summary>
     /// 현재 진행 중인 화살표 생성 및 입력 시퀸스의 모든 화살표를 순서대로 입력하여, 성공 처리
@@ -444,7 +476,7 @@ public class ArrowSystem : MonoBehaviour
     public void ClearArrow()
     {
         foreach (Transform child in arrowParent)
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
 
         sequence.Clear();
     }

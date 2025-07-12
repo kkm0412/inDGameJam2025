@@ -733,7 +733,7 @@ MonoBehaviour:
   stageTimeLimit: 120
   nowStage: 3
   stageStart: 0
-  clearUI: {fileID: 0}
+  clearUI: {fileID: 1321480675}
 --- !u!114 &124712917
 MonoBehaviour:
   m_ObjectHideFlags: 0
