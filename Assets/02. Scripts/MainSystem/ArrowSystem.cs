@@ -14,12 +14,18 @@ public class ArrowSystem : MonoBehaviour
     public GameObject arrowPrefab;
     public Transform arrowParent;
 
+    public EnemyAttackController enemyAttackController;
+
     public GameObject customer;
     public GameObject waitingcustomer;
     public GameObject waitingCustomer2;
     public GameObject createBread;
 
     public bool isReverse;
+
+    public bool isBombReady;
+    private float bombCooldown = 10f;
+    public float leftBombCooldown = 0f;
 
     public float spacing = 100f;
     public float limitTime = 5f;
@@ -31,31 +37,14 @@ public class ArrowSystem : MonoBehaviour
     private Queue<int> customerQueue = new Queue<int>();
     private List<int> customerIndexList = new List<int>();
 
-    private PlayerInput inputActions;
     private Animator animator;
+    public Animator Anim => animator;
     private SpriteRenderer sr;
 
     private void Awake()
     {
-        inputActions = new PlayerInput();
         animator = playerHand.GetComponent<Animator>();
         sr = playerHand.GetComponent<SpriteRenderer>();
-    }
-
-    private void OnEnable()
-    {
-        inputActions.GamePlay.Enable();
-
-        inputActions.GamePlay.InputUp.performed += ctx => CheckInput(ArrowKey.Up);
-        inputActions.GamePlay.InputDown.performed += ctx => CheckInput(ArrowKey.Down);
-        inputActions.GamePlay.InputLeft.performed += ctx => CheckInput(ArrowKey.Left);
-        inputActions.GamePlay.InputRight.performed += ctx => CheckInput(ArrowKey.Right);
-        inputActions.GamePlay.InputSpace.performed += ctx => CheckInput(ArrowKey.Space);
-    }
-
-    private void OnDisable()
-    {
-        inputActions.GamePlay.Disable();
     }
 
     private void Start()
@@ -73,11 +62,22 @@ public class ArrowSystem : MonoBehaviour
     {
         if (isActive)
         {
+            if (enemyAttackController.isParrying) return;
+
             currentTime -= Time.deltaTime;
             arrowTimer.value = currentTime;
             if (currentTime <= 0)
             {
                 FailInput();
+            }
+        }
+
+        if (GameManager.Instance.stageStart && !isBombReady)
+        {
+            leftBombCooldown -= Time.deltaTime;
+            if (leftBombCooldown <= 0 && !isActive)
+            {
+                isBombReady = true;
             }
         }
     }
@@ -100,6 +100,7 @@ public class ArrowSystem : MonoBehaviour
     /// <param name="count">생성할 화살표의 개수</param>
     public void StartArrowInput()
     {
+        
         int nowStage = GameManager.Instance.nowStage;
         int count = 0;
         ClearArrow();
@@ -114,7 +115,6 @@ public class ArrowSystem : MonoBehaviour
         {
             isReverse = Random.value < 0.3f;
         }
-        Debug.Log(isReverse);
 
         if (nowStage == 1)
         {
@@ -185,7 +185,7 @@ public class ArrowSystem : MonoBehaviour
     // TODO : 추후 (0,7)로 수정할 것
     public int ChangeCustomerSprite()
     {
-        return Random.Range(0, 4);
+        return Random.Range(0, 6);
     }
 
     /// <summary>
@@ -227,26 +227,44 @@ public class ArrowSystem : MonoBehaviour
 
     private Sprite GetMixHandSprite(string index)
     {
-        string path = $"MixHand/{index}";
-        return Resources.Load<Sprite>(path);
+        if (isBombReady && !enemyAttackController.isParrying)
+        {
+            string path = $"BombHand/{index}";
+            return Resources.Load<Sprite>(path);
+        }
+        else if (!isBombReady && !enemyAttackController.isParrying)
+        {
+            string path = $"MixHand/{index}";
+            return Resources.Load<Sprite>(path);
+        }
+        else
+        {
+            return null;
+        }
+            
     }
 
     /// <summary>
     /// 입력받은 키가 생성된 화살표와 같은 키인지 확인한다,
     /// </summary>
     /// <returns>생성된 화살표와 같은 키를 입력받으면 true, 다른 키를 입력받으면 false</returns>
-    private void CheckInput(ArrowKey key)
+    public void CheckInput(ArrowKey key)
     {
         if (!isActive) return;
+        if (enemyAttackController.isParrying) return;
 
         ArrowKey expected = sequence[currentKey];
         ArrowKey correctInput = isReverse ? GetOpposite(expected) : expected;
 
+        // 폭탄일 경우 폭탄 애니메이션 재생
         if (key == correctInput)
         {
             // 성공 처리
             animator.enabled = false; // 애니메이션 비활성화
-            sr.sprite = GetMixHandSprite(key.ToString());
+            if (GetMixHandSprite(key.ToString()) != null)
+            {
+                sr.sprite = GetMixHandSprite(key.ToString());
+            }
             arrowParent.Find(currentKey.ToString()).gameObject.SetActive(false);
             currentKey++;
             SoundManager.Instance.PlaySound(0); // 사운드 재생
@@ -289,13 +307,24 @@ public class ArrowSystem : MonoBehaviour
         animator.enabled = true; // 애니메이션 활성화
         int increHp = GameManager.Instance.Combo + 1;
         GameManager.Instance.IncreCombo();
-        isActive = false;
+        
         ClearArrow();
         Debug.Log("성공");
         GameManager.Instance.TakeDamage(-increHp);
-        createBread.SetActive(true);
-        createBread.GetComponent<Animator>().Play("breadEffect Animation");
+        if (isBombReady)
+        {
+            animator.SetTrigger("Throw");
+            isBombReady = false;
+            leftBombCooldown = bombCooldown;
+
+        }
+        else
+        {
+            createBread.SetActive(true);
+            createBread.GetComponent<Animator>().Play("breadEffect Animation");
+        }           
         SoundManager.Instance.PlaySound(2); // 사운드 재생
+        isActive = false;
         StartCoroutine(DelayedStartArrowInput());
     }
 

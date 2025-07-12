@@ -7,27 +7,28 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public static Action<int> OnHpChanged;
+    [SerializeField]
     private ArrowSystem arrowSystem;
 
     // 플레이어의 체력
     [SerializeField]
     private int playerHp = 100;
-    private int PlayerHp => playerHp;
+    public int PlayerHp => playerHp;
 
     // 플레이어 체력 회복 범위 (예: 1~3)
     [SerializeField]
     private int playerHeal = 1;
-    private int PlayerHeal => playerHeal;
+    public int PlayerHeal => playerHeal;
 
     [SerializeField]
     // 플레이어 폭탄의 데미지 범위 (예: 5~10)
     private int playerBombDamage = 5;
-    private int PlayerBombDamage => playerBombDamage;
+    public int PlayerBombDamage => playerBombDamage;
 
     // 폭탄 사용 쿨타임 (초)
     [SerializeField]
     private float playerBombCooldown = 10f;
-    private float PlayerBombCooldown => playerBombCooldown;
+    public float PlayerBombCooldown => playerBombCooldown;
 
     [SerializeField]
     private int combo = 0;
@@ -55,7 +56,6 @@ public class GameManager : MonoBehaviour
         }
         combo = 0;
         leftStageTime = stageTimeLimit;
-        arrowSystem = GetComponent<ArrowSystem>();
     }
 
     private void Start()
@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
     public void IncreCombo()
     {
         combo += 1;
+        this.gameObject.GetComponent<UIManager>().playerComboText.GetComponent<Animator>().SetTrigger("isCombo");
     }
 
     public void ResetCombo()
