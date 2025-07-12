@@ -9,7 +9,7 @@ using UnityEngine.XR;
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
-    GameManager gameManager;
+    //GameManager gameManager;
     EnemyAttackWarning attackWarning;
 
     public ArrowSystem arrowSystem;
@@ -26,13 +26,13 @@ public class EnemyAttackController : MonoBehaviour
     private bool isParryAble = false;  //공격을 패링할 수 있음. True일시 패링 활성화
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
-    private bool isTryParry = false; //패링 시도 유무(패링 효과 관리용)
+    private bool isTryParry = false; //패링 시도 유무. 사용 X 사이클 생김
     public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
     void Start()
     {
-        gameManager = GetComponent<GameManager>();
+        //gameManager = GetComponent<GameManager>();
         attackWarning = GetComponent<EnemyAttackWarning>();
         StartCoroutine(EnemyAttack());
     }
