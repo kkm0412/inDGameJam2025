@@ -27,8 +27,11 @@ public class TextManager : MonoBehaviour
     public List<string> storyLines;
     public List<bool> faceLines;
 
-    // Start is called before the first frame update
-    void Start()
+    private int currentLineIndex = 0;
+    private bool isPlaying = false;
+
+
+    private void Start()
     {
         storyText = GetComponent<StoryText>();
 
@@ -40,31 +43,56 @@ public class TextManager : MonoBehaviour
         //PrintText(1); //테스트 용도
     }
 
+    private void Update()
+    {
+        if (!isPlaying) return;
+
+        // 키를 누르고 뗐을 때 다음 줄 진행
+        if (Input.anyKeyDown)
+        {
+            AdvanceLine();
+        }
+    }
+
     /// <summary>
-    /// 스테이지별 텍스트 및 이미지 출력
+    /// 스테이지별 텍스트 및 이미지 출력 int로 스테이지 수정
     /// </summary>
     /// <param name="stageNum">출력할 스테이지 입력(1-4)</param>
     public void PrintText(int stageNum)
     {
         storyLines = storyText.GetStoryTextList(stageNum);
         faceLines = storyText.GetFaceList(stageNum);
+
+        currentLineIndex = 0;
+        isPlaying = true;
         textCanvas.SetActive(true);
-        StartCoroutine(ChangeTMPText(stageNum));
+        ShowCurrentLine();
     }
 
-    //Text 오브젝트의 TMP_Text 수정. 건들기 ㄴㄴ
-    IEnumerator ChangeTMPText(int chapter)
+    //줄 출력
+    private void ShowCurrentLine()
     {
-        int faceIndex = 0;
-        foreach (string line in storyLines)
+        if (currentLineIndex < storyLines.Count)
         {
-            Debug.Log(line);
-            talkImageCtrl.IsMouseMove(faceLines[faceIndex]);  //컷신 이미지 조정할거면.
+            string line = storyLines[currentLineIndex];
             tmp_txt.text = line;
-            faceIndex += 1;
-            yield return new WaitUntil(() => Input.anyKeyDown);
-            yield return new WaitWhile(() => Input.anyKey);
+            Debug.Log(line);
+            talkImageCtrl.IsMouseMove(faceLines[currentLineIndex]);
         }
-        textCanvas.SetActive(false);
+    }
+
+    //다음 줄 진행 메서드
+    private void AdvanceLine()
+    {
+        currentLineIndex++;
+        if (currentLineIndex >= storyLines.Count)
+        {
+            isPlaying = false;
+            textCanvas.SetActive(false);
+        }
+        else
+        {
+            ShowCurrentLine();
+        }
     }
 }
