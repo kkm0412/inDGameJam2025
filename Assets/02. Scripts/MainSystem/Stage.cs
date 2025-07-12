@@ -45,20 +45,26 @@ public class Stage : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.stageStart && !stageStart)
-        {
-            StartCoroutine(EnemyAutoHeal(stageData.enemyHealAmount, stageData.enemyHealInterval));
-            stageStart = true;
-        }
+        //if (GameManager.Instance.stageStart && !stageStart)
+        //{
+        //    StartAutoHeal();
+        //    stageStart = true;
+        //}
+    }
+
+    public void StartAutoHeal()
+    {
+        StartCoroutine(EnemyAutoHeal(stageData.enemyHealAmount, stageData.enemyHealInterval));
     }
 
     public void TakeDamage(int amount)
     {
         stageData.enemyHp -= amount;
         Debug.Log(stageData.enemyHp);
+
         if (stageData.enemyHp <= 0 )
         {
-            GameManager.Instance.EnmeyOver();
+            GameManager.Instance.EnemyOver();
         }
     }
 

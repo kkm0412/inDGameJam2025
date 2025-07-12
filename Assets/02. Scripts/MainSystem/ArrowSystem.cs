@@ -47,6 +47,8 @@ public class ArrowSystem : MonoBehaviour
 
     private SpriteRenderer sr;
 
+    private Dictionary<GameObject, Coroutine> activeCoroutines = new();
+
     private void Awake()
     {
         animator = playerHand.GetComponent<Animator>();
@@ -107,14 +109,23 @@ public class ArrowSystem : MonoBehaviour
     /// <param name="count">생성할 화살표의 개수</param>
     public void StartArrowInput()
     {
+        customer.SetActive(true);
+        waitingcustomer.SetActive(true);
+        waitingCustomer2.SetActive(true);
 
+        if (!enemyAttackController.isParrying)
+        {
+            arrowBackground.SetActive(true);
+            arrowTimer.gameObject.SetActive(true);
+        }
+
+        arrowBackground.GetComponent<Image>().color = Color.white;
         int nowStage = GameManager.Instance.nowStage;
         int count = 0;
         ClearArrow();
 
         animator.enabled = true; // 대기 애니메이션 활성화
 
-        arrowBackground.SetActive(true);
         if (nowStage < 3)
         {
             isReverse = false;
@@ -143,8 +154,8 @@ public class ArrowSystem : MonoBehaviour
                 count = 8;
             }
         }
-        arrowTimer.gameObject.SetActive(true);
         currentTime = limitTime;
+
         // 정방향 + 스페이스
         if (!isReverse && nowStage >= 2)
         {
@@ -274,7 +285,17 @@ public class ArrowSystem : MonoBehaviour
 
             if (arrowTransform != null)
             {
-                StartCoroutine(FadeOutAndShrink(arrowTransform.gameObject));
+                GameObject arrowObj = arrowTransform.gameObject;
+
+                // 기존 코루틴이 있다면 중지
+                if (activeCoroutines.ContainsKey(arrowObj))
+                {
+                    StopCoroutine(activeCoroutines[arrowObj]);
+                    activeCoroutines.Remove(arrowObj);
+                }
+
+                Coroutine coro = StartCoroutine(FadeOutAndShrink(arrowObj));
+                activeCoroutines[arrowObj] = coro;
             }
 
             if (GetMixHandSprite(key.ToString()) != null)
@@ -288,8 +309,30 @@ public class ArrowSystem : MonoBehaviour
             if (currentKey >= sequence.Count)
                 SuccessInput();
         }
-    }
+        else
+        {
+            currentKey = 0;
+            for (int i = 0; i < spawnArrow; i++)
+            {
+                GameObject arrowObj = arrowParent.GetChild(i).gameObject;
 
+                if (activeCoroutines.ContainsKey(arrowObj))
+                {
+                    StopCoroutine(activeCoroutines[arrowObj]);
+                    activeCoroutines.Remove(arrowObj);
+                }
+
+                // 복구
+                arrowObj.SetActive(true);
+                arrowObj.transform.localScale = new Vector3(1.5f, 1.5f, 1);
+
+                Image img = arrowObj.transform.Find("Arrow").GetComponent<Image>();
+                Color baseColor = img.color;
+                img.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
+            }
+        }
+    }
+    
     private IEnumerator FadeOutAndShrink(GameObject target)
     {
         float duration = 0.3f;
@@ -352,6 +395,7 @@ public class ArrowSystem : MonoBehaviour
         ClearArrow();
         Debug.Log("성공");
         arrowBackground.SetActive(false);
+        arrowTimer.gameObject.SetActive(false);
         GameManager.Instance.TakeDamage(-increHp);
         if (isBombReady)
         {
@@ -378,6 +422,7 @@ public class ArrowSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
         explosiveAnim.Play("enemyhit Animation");
         Stage.Instance.TakeDamage(60);
+        GameManager.Instance.GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
         enemySprite.sprite = GetEnemySprite();
         explosiveAnim.enabled = true;
@@ -386,7 +431,10 @@ public class ArrowSystem : MonoBehaviour
             yield return new WaitForSeconds(1f);
             explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
             explosiveAnim.enabled = false;
-            arrowTimer.gameObject.SetActive(true);
+            if (!enemyAttackController.isParrying)
+            {
+                arrowTimer.gameObject.SetActive(true);
+            }
             throwBackGround.SetActive(false);
         }
         else
@@ -396,18 +444,19 @@ public class ArrowSystem : MonoBehaviour
             explosiveAnim.enabled = false;
             enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
             enemyDieEffect.enabled = true;
-            enemyAttackController.StopAllCoroutines();
+            StopCoroutine(GameManager.Instance.enemyCoro);
             Stage.Instance.StopAllCoroutines();
             StopCoroutine(DelayedStartArrowInput());
             StopInput();
             arrowBackground.SetActive(false);
             yield return new WaitForSeconds(1f);
             enemyDieEffect.gameObject.SetActive(false);
+            GameManager.Instance.StageEnd();
             Debug.Log("적 사망2");
 
         }
     }
-    private Sprite GetEnemySprite()
+    public Sprite GetEnemySprite()
     {
         int index = 0;
         if (Stage.Instance.GetStageData().enemyHp <= 0)
@@ -476,7 +525,7 @@ public class ArrowSystem : MonoBehaviour
     public void ClearArrow()
     {
         foreach (Transform child in arrowParent)
-            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
 
         sequence.Clear();
     }

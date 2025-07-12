@@ -12,11 +12,18 @@ public class DialogManager : MonoBehaviour
 
 
     public GameObject dialogUI;
-    public TMP_Text dialogText;
     public Image cutSceneImage;
     public Dialog[] dialogList;
+    public GameObject[] labels;
     public Dialog currentDialog;
     public List<DialogData> currentText;
+
+    public Animator anim;
+
+    public Image startButtonImage;
+    public Button nextDialogButton;
+    public Button endDialogButton;
+
     public bool isTalking = false;
     int textIndex = 0;
 
@@ -44,14 +51,15 @@ public class DialogManager : MonoBehaviour
         {
             currentText.Add(dialog.dialogList[i]);
         }
-        cutSceneImage.sprite = dialog.cutSceneImage;
         DisplayText();
     }
 
     public void AppearDialogUI()
     {
         dialogUI.SetActive(true);
+        StartCoroutine(FadeIn());
         InitText(dialogList[GameManager.Instance.nowStage - 1]);
+        nextDialogButton.gameObject.SetActive(true  );
     }
 
     public void DisAppearDialogUI()
@@ -61,15 +69,16 @@ public class DialogManager : MonoBehaviour
 
     public void DisplayText()
     {
-        dialogText.text = currentText[textIndex].dialogText;
+        cutSceneImage.sprite = currentText[textIndex].cutSceneImage;
     }
 
     public void NextText()
     {
         if (textIndex >= currentText.Count - 1)
         {
-            EndDialog();
-            return;
+            endDialogButton.gameObject.SetActive(true);
+            startButtonImage.gameObject.SetActive(true);
+            nextDialogButton.gameObject.SetActive(false);
         }
         else
         {
@@ -81,10 +90,29 @@ public class DialogManager : MonoBehaviour
     public void EndDialog()
     {
         isTalking = false;
+
+        endDialogButton.gameObject.SetActive(false);
+        startButtonImage.gameObject.SetActive(false);
+        nextDialogButton.gameObject.SetActive(false);
+
         textIndex = 0;
         currentText.Clear();
-        dialogText.text = "";
         GameManager.Instance.StageStart();
         DisAppearDialogUI();
+    }
+
+    IEnumerator FadeIn()
+    {
+        anim.gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 1);
+        anim.gameObject.SetActive(true);
+        labels[GameManager.Instance.nowStage - 1].SetActive(true);
+        yield return new WaitForSeconds(5f);
+        labels[GameManager.Instance.nowStage - 1].SetActive(false);
+        anim.enabled = true;
+        anim.Play("Black2");
+        yield return new WaitForSeconds(1f);
+        anim.enabled = false;
+        
+        anim.gameObject.SetActive(false);
     }
 }

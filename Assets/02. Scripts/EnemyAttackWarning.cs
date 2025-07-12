@@ -196,7 +196,7 @@ public class EnemyAttackWarning : MonoBehaviour
         Color color = warningParry[warnDir].color;
         color.a = 0.5f;
         warningParry[warnDir].color = color;
-
+        criticalWarningEffect[warnDir].SetActive(true);
         while (timer < parryTime)
         {
             if (isTryParry == true)
@@ -207,6 +207,7 @@ public class EnemyAttackWarning : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
+        criticalWarningEffect[warnDir].SetActive(false);
 
         yield return null;
         color.a = 0;

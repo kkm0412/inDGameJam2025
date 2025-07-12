@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject clearUI;
 
+    public GameObject fadeOutBlack;
+
     public Coroutine gameCoro;
     public Coroutine enemyCoro;
 
@@ -88,12 +90,22 @@ public class GameManager : MonoBehaviour
     {
         gameCoro = StartCoroutine(GameStart());
         enemyCoro = StartCoroutine(enemyAttackController.EnemyAttack());
+       
     }
 
     IEnumerator GameStart()
     {
-        yield return new WaitForSeconds(3f);
+        arrowSystem.throwBackGround.SetActive(false);
+        arrowSystem.customer.gameObject.SetActive(false);
+        arrowSystem.waitingcustomer.gameObject.SetActive(false);
+        arrowSystem.waitingCustomer2.gameObject.SetActive(false);
+        arrowSystem.arrowTimer.gameObject.SetActive(false);
+        arrowSystem.arrowBackground.SetActive(false);
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
+        GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
+        yield return new WaitForSeconds(3f);
+        Stage.Instance.StartAutoHeal();
+        arrowSystem.enemySprite.sprite = arrowSystem.GetEnemySprite();
         stageStart = true;
         arrowSystem.customer.gameObject.SetActive(true);
         arrowSystem.StartArrowInput();
@@ -126,9 +138,10 @@ public class GameManager : MonoBehaviour
         arrowSystem.StopInput();
     }
 
-    public void EnmeyOver()
+    public void EnemyOver()
     {
         stageStart = false;
+        
         Debug.Log("적 사망");
     }
 
@@ -140,10 +153,21 @@ public class GameManager : MonoBehaviour
 
     public void NextStage()
     {
+        StartCoroutine(NextStageFadeOut());
+    }
+
+    public IEnumerator NextStageFadeOut()
+    {
+        fadeOutBlack.SetActive(true);
+        fadeOutBlack.GetComponent<Animator>().enabled = true;
+        yield return new WaitForSeconds(1.3f);
+        fadeOutBlack.GetComponent<Animator>().enabled = false;
+
+        fadeOutBlack.SetActive(false);
         clearUI.SetActive(false);
         TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
         leftStageTime = stageTimeLimit; // 스테이지 시간 초기화
-        nowStage += 1;
+        nowStage += 1;     
         DialogManager.Instance.AppearDialogUI();
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
     }
