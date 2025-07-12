@@ -27,7 +27,7 @@ public class Stage : MonoBehaviour
         }
     }
     
-    private void InitStageData(StageDatabase data)
+    public void InitStageData(StageDatabase data)
     {
         stageData = new StageData(data);
     }
