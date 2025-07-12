@@ -19,14 +19,11 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         GameManager.OnHpChanged += UpdatePlayerHp;
-        Stage.OnEnemyHpChanged += UpdateEnemyHp;
     }
 
     private void OnDisable()
     {
         GameManager.OnHpChanged -= UpdatePlayerHp;
-        Stage.OnEnemyHpChanged -= UpdateEnemyHp;
-
     }
 
     private void Start()
@@ -41,6 +38,7 @@ public class UIManager : MonoBehaviour
         {
             int minutes = (int)(GameManager.Instance.leftStageTime / 60);
             int seconds = (int)(GameManager.Instance.leftStageTime % 60);
+            enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
             stageTimer.text = string.Format("{0:D2}:{1:D2}", minutes, seconds);
         }
 
@@ -53,8 +51,6 @@ public class UIManager : MonoBehaviour
         {
             playerComboText.gameObject.SetActive(false);
         }
-        enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
-
     }
 
     void UpdatePlayerHp(int value)

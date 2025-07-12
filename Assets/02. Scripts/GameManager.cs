@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public EnemyAttackController enemyAttackController;
     public static Action<int> OnHpChanged;
     [SerializeField]
     private ArrowSystem arrowSystem;
@@ -43,6 +44,11 @@ public class GameManager : MonoBehaviour
 
     public bool stageStart = false;
 
+    public GameObject clearUI;
+
+    public Coroutine gameCoro;
+    public Coroutine enemyCoro;
+
 
     private void Awake()
     {
@@ -56,13 +62,13 @@ public class GameManager : MonoBehaviour
         }
         combo = 0;
         leftStageTime = stageTimeLimit;
+        clearUI.SetActive(false);
     }
 
     private void Start()
     {
         OnHpChanged?.Invoke(playerHp);
         arrowSystem.customer.gameObject.SetActive(false);
-        StartCoroutine(GameStart());
     }
     // Update is called once per frame
     void Update()
@@ -78,10 +84,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StageStart()
+    {
+        gameCoro = StartCoroutine(GameStart());
+        enemyCoro = StartCoroutine(enemyAttackController.EnemyAttack());
+    }
+
     IEnumerator GameStart()
     {
         yield return new WaitForSeconds(3f);
-        GameManager.Instance.stageStart = true;
+        Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
+        stageStart = true;
         arrowSystem.customer.gameObject.SetActive(true);
         arrowSystem.StartArrowInput();
     }
@@ -115,11 +128,23 @@ public class GameManager : MonoBehaviour
 
     public void EnmeyOver()
     {
+        stageStart = false;
         Debug.Log("적 사망");
     }
 
-    void StageEnd()
+    public void StageEnd()
     {
+        clearUI.SetActive(true);
         Debug.Log("스테이지 종료");
+    }
+
+    public void NextStage()
+    {
+        clearUI.SetActive(false);
+        TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
+        leftStageTime = stageTimeLimit; // 스테이지 시간 초기화
+        nowStage += 1;
+        DialogManager.Instance.AppearDialogUI();
+        Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage-1]);
     }
 }
