@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Analytics;
-using UnityEngine.XR;
 
 
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
     EnemyAttackWarning attackWarning;
+
+    public ArrowSystem arrowSystem;
+
     private int atkDirection = 0; //0일시 좌, 1일시 우
-    [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
+    [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩   //현재 폭탄 이펙트 없어서 사용 X
+    [SerializeField] private int EnemyBombDamage = 5;   //폭탄의 데미지, 패링 실패시 입는 피해량
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
     [SerializeField] private float attackPrePareTimeMax;    //적 공격 준비시간 최대
     private float attackPrepareTime;    //적이 공격준비하는 시간, 랜덤으로 지정
@@ -22,6 +24,7 @@ public class EnemyAttackController : MonoBehaviour
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
     private bool isTryParry = false; //패링 시도 유무(패링 효과 관리용)
+    public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
     void Start()
@@ -49,6 +52,7 @@ public class EnemyAttackController : MonoBehaviour
             if (!isParrySuccess)
             {
                 Debug.Log("패링 실패");
+                GameManager.Instance.TakeDamage(EnemyBombDamage);
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
@@ -86,7 +90,7 @@ public class EnemyAttackController : MonoBehaviour
     }
 
     /// <summary>
-    /// 적의 공격을 패링하는 메서드.
+    /// 적의 공격을 패링하는 메서드. 입력키에 집어넣어서 사용
     /// </summary>
     /// <param name="parryDir">0일시 좌 패링, 1일시 우 패링,</param>
     public void ParryEnemyAttack(int parryDir)
@@ -99,6 +103,10 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 0)
                 {
                     Debug.Log("좌 패링 성공");
+                    arrowSystem.Anim.enabled = true;
+                    arrowSystem.Anim.SetTrigger("LeftParrying");
+                    isParrying = true;
+                    StartCoroutine(IsParrying());
                     isParrySuccess = true;
                 }
                 else
@@ -115,7 +123,11 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 1)
                 {
                     Debug.Log("우 패링 성공");
-                    isParryAble = true;
+                    arrowSystem.Anim.enabled = true;
+                    arrowSystem.Anim.SetTrigger("RightParrying");
+                    isParrying = true; 
+                    StartCoroutine(IsParrying());
+                    isParrySuccess = true;
                 }
                 else
                 {
@@ -127,6 +139,13 @@ public class EnemyAttackController : MonoBehaviour
             }
         }
     }
+
+    IEnumerator IsParrying()
+    {
+        yield return new WaitForSeconds(2f);
+        isParrying = false;
+    }
+
     /// <summary>
     /// 패링 시도시 패링 경고 효과 끊기
     /// </summary>

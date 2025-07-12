@@ -136,6 +136,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ParryingLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""7dfc3c62-d7fa-4090-8f3f-b41511b9b606"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ParryingRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""b75f2f5f-7acb-4333-99d9-d393096ea93a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -237,6 +255,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""InputSpace"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f49958c4-cde5-498f-88ef-d585d423e99e"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ParryingLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""403d3645-94ca-49ff-a868-dbc73b03cb0e"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ParryingLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b729a6c-3cd2-453f-bfd4-1722fd818a27"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ParryingRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2383811-ed47-47cd-a59f-949a69acec70"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ParryingRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -250,6 +312,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_GamePlay_InputLeft = m_GamePlay.FindAction("InputLeft", throwIfNotFound: true);
         m_GamePlay_InputRight = m_GamePlay.FindAction("InputRight", throwIfNotFound: true);
         m_GamePlay_InputSpace = m_GamePlay.FindAction("InputSpace", throwIfNotFound: true);
+        m_GamePlay_ParryingLeft = m_GamePlay.FindAction("ParryingLeft", throwIfNotFound: true);
+        m_GamePlay_ParryingRight = m_GamePlay.FindAction("ParryingRight", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -335,6 +399,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_GamePlay_InputLeft;
     private readonly InputAction m_GamePlay_InputRight;
     private readonly InputAction m_GamePlay_InputSpace;
+    private readonly InputAction m_GamePlay_ParryingLeft;
+    private readonly InputAction m_GamePlay_ParryingRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "GamePlay".
     /// </summary>
@@ -366,6 +432,14 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "GamePlay/InputSpace".
         /// </summary>
         public InputAction @InputSpace => m_Wrapper.m_GamePlay_InputSpace;
+        /// <summary>
+        /// Provides access to the underlying input action "GamePlay/ParryingLeft".
+        /// </summary>
+        public InputAction @ParryingLeft => m_Wrapper.m_GamePlay_ParryingLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "GamePlay/ParryingRight".
+        /// </summary>
+        public InputAction @ParryingRight => m_Wrapper.m_GamePlay_ParryingRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -407,6 +481,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InputSpace.started += instance.OnInputSpace;
             @InputSpace.performed += instance.OnInputSpace;
             @InputSpace.canceled += instance.OnInputSpace;
+            @ParryingLeft.started += instance.OnParryingLeft;
+            @ParryingLeft.performed += instance.OnParryingLeft;
+            @ParryingLeft.canceled += instance.OnParryingLeft;
+            @ParryingRight.started += instance.OnParryingRight;
+            @ParryingRight.performed += instance.OnParryingRight;
+            @ParryingRight.canceled += instance.OnParryingRight;
         }
 
         /// <summary>
@@ -433,6 +513,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @InputSpace.started -= instance.OnInputSpace;
             @InputSpace.performed -= instance.OnInputSpace;
             @InputSpace.canceled -= instance.OnInputSpace;
+            @ParryingLeft.started -= instance.OnParryingLeft;
+            @ParryingLeft.performed -= instance.OnParryingLeft;
+            @ParryingLeft.canceled -= instance.OnParryingLeft;
+            @ParryingRight.started -= instance.OnParryingRight;
+            @ParryingRight.performed -= instance.OnParryingRight;
+            @ParryingRight.canceled -= instance.OnParryingRight;
         }
 
         /// <summary>
@@ -508,5 +594,19 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInputSpace(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ParryingLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnParryingLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ParryingRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnParryingRight(InputAction.CallbackContext context);
     }
 }
