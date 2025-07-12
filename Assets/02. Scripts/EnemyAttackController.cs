@@ -8,7 +8,6 @@ using UnityEngine.Analytics;
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
-
     EnemyAttackWarning attackWarning;
 
     public ArrowSystem arrowSystem;
@@ -35,7 +34,6 @@ public class EnemyAttackController : MonoBehaviour
     private bool isParryAble = false;  //공격을 패링할 수 있음. True일시 패링 활성화
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
-    //private bool isTryParry = false; //패링 시도 유무(패링 효과 관리용)
     public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
