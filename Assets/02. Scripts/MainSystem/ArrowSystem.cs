@@ -176,6 +176,7 @@ public class ArrowSystem : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 sequence.Add((ArrowKey)Random.Range(0, 4));
+                arrowBackground.GetComponent<Image>().color = new Color(1f, 0f, 1f);
                 GameObject arrow = Instantiate(arrowPrefab, arrowParent);
                 arrow.name = i.ToString();
                 Transform child = arrow.transform.Find("Arrow");
