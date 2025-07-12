@@ -14,8 +14,11 @@ public class DialogManager : MonoBehaviour
     public GameObject dialogUI;
     public Image cutSceneImage;
     public Dialog[] dialogList;
+    public GameObject[] labels;
     public Dialog currentDialog;
     public List<DialogData> currentText;
+
+    public Animator anim;
 
     public Image startButtonImage;
     public Button nextDialogButton;
@@ -54,6 +57,7 @@ public class DialogManager : MonoBehaviour
     public void AppearDialogUI()
     {
         dialogUI.SetActive(true);
+        StartCoroutine(FadeIn());
         InitText(dialogList[GameManager.Instance.nowStage - 1]);
         nextDialogButton.gameObject.SetActive(true  );
     }
@@ -95,5 +99,17 @@ public class DialogManager : MonoBehaviour
         currentText.Clear();
         GameManager.Instance.StageStart();
         DisAppearDialogUI();
+    }
+
+    IEnumerator FadeIn()
+    {
+        anim.gameObject.SetActive(true);
+        labels[GameManager.Instance.nowStage - 1].SetActive(true);
+        yield return new WaitForSeconds(5f);
+        labels[GameManager.Instance.nowStage - 1].SetActive(false);
+        anim.enabled = true;
+        yield return new WaitForSeconds(1f);
+        anim.enabled = false;
+        anim.gameObject.SetActive(false);
     }
 }

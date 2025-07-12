@@ -47,6 +47,8 @@ public class ArrowSystem : MonoBehaviour
 
     private SpriteRenderer sr;
 
+    private Dictionary<GameObject, Coroutine> activeCoroutines = new();
+
     private void Awake()
     {
         animator = playerHand.GetComponent<Animator>();
@@ -283,12 +285,17 @@ public class ArrowSystem : MonoBehaviour
 
             if (arrowTransform != null)
             {
-                StartCoroutine(FadeOutAndShrink(arrowTransform.gameObject));
-            }
+                GameObject arrowObj = arrowTransform.gameObject;
 
-            if (GetMixHandSprite(key.ToString()) != null)
-            {
-                sr.sprite = GetMixHandSprite(key.ToString());
+                // 기존 코루틴이 있다면 중지
+                if (activeCoroutines.ContainsKey(arrowObj))
+                {
+                    StopCoroutine(activeCoroutines[arrowObj]);
+                    activeCoroutines.Remove(arrowObj);
+                }
+
+                Coroutine coro = StartCoroutine(FadeOutAndShrink(arrowObj));
+                activeCoroutines[arrowObj] = coro;
             }
 
             currentKey++;
@@ -297,8 +304,30 @@ public class ArrowSystem : MonoBehaviour
             if (currentKey >= sequence.Count)
                 SuccessInput();
         }
-    }
+        else
+        {
+            currentKey = 0;
+            for (int i = 0; i < spawnArrow; i++)
+            {
+                GameObject arrowObj = arrowParent.GetChild(i).gameObject;
 
+                if (activeCoroutines.ContainsKey(arrowObj))
+                {
+                    StopCoroutine(activeCoroutines[arrowObj]);
+                    activeCoroutines.Remove(arrowObj);
+                }
+
+                // 복구
+                arrowObj.SetActive(true);
+                arrowObj.transform.localScale = new Vector3(1.5f, 1.5f, 1);
+
+                Image img = arrowObj.transform.Find("Arrow").GetComponent<Image>();
+                Color baseColor = img.color;
+                img.color = new Color(baseColor.r, baseColor.g, baseColor.b, 1f);
+            }
+        }
+    }
+    
     private IEnumerator FadeOutAndShrink(GameObject target)
     {
         float duration = 0.3f;

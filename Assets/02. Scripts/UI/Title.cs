@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Title : MonoBehaviour
 {
@@ -41,7 +42,6 @@ public class Title : MonoBehaviour
         SoundManager.Instance.PlaySound(7);
         yield return new WaitForSeconds(1f);
         SoundManager.Instance.PlayBackgroundMusic(1);
-        this.gameObject.SetActive(false);
-        
+        SceneManager.LoadScene("MainStage");
     }
 }
