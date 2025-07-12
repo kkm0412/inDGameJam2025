@@ -232,11 +232,14 @@ MonoBehaviour:
   playerHand: {fileID: 379776593}
   arrowPrefab: {fileID: 7200264771626706271, guid: 08ec821bb76c46f48ae046015b1257d1, type: 3}
   arrowParent: {fileID: 2006861939}
+  enemyAttackController: {fileID: 0}
   customer: {fileID: 1207402493}
   waitingcustomer: {fileID: 377316795}
   waitingCustomer2: {fileID: 1039455066}
   createBread: {fileID: 285136934}
   isReverse: 0
+  isBombReady: 0
+  leftBombCooldown: 0
   spacing: 200
   limitTime: 5
   arrowTimer: {fileID: 828728294}
@@ -267,6 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cc42dd9843c1d488f379666839726b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arrowSystem: {fileID: 124712913}
   playerHp: 100
   playerHeal: 1
   playerBombDamage: 5
