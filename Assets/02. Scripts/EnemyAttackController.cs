@@ -107,8 +107,9 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 0)
                 {
                     Debug.Log("좌 패링 성공");
-                    isParrying = true;
+                    arrowSystem.Anim.enabled = true;
                     arrowSystem.Anim.SetTrigger("LeftParrying");
+                    isParrying = true;
                     StartCoroutine(IsParrying());
                     isParrySuccess = true;
                 }
@@ -126,8 +127,9 @@ public class EnemyAttackController : MonoBehaviour
                 if (atkDirection == 1)
                 {
                     Debug.Log("우 패링 성공");
-                    isParrying = true;
+                    arrowSystem.Anim.enabled = true;
                     arrowSystem.Anim.SetTrigger("RightParrying");
+                    isParrying = true; 
                     StartCoroutine(IsParrying());
                     isParryAble = true;
                 }
