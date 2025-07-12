@@ -1,26 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Analytics;
+using UnityEngine.XR;
 
 
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
+    //GameManager gameManager;
     EnemyAttackWarning attackWarning;
 
     public ArrowSystem arrowSystem;
-    public GameObject ThrowBackGround;
-    public GameObject ArrowBackground;
-    public GameObject ArrowEffect;
-    public GameObject InputTimer;
-
-    public GameObject boom_Left;
-    public GameObject boom_Right;
-
-    public GameObject fail_parry_Left;
-    public GameObject fail_parry_Right;
 
     private int atkDirection = 0; //0일시 좌, 1일시 우
     [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩   //현재 폭탄 이펙트 없어서 사용 X
@@ -34,11 +26,13 @@ public class EnemyAttackController : MonoBehaviour
     private bool isParryAble = false;  //공격을 패링할 수 있음. True일시 패링 활성화
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
+    private bool isTryParry = false; //패링 시도 유무. 사용 X 사이클 생김
     public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
     void Start()
     {
+        //gameManager = GetComponent<GameManager>();
         attackWarning = GetComponent<EnemyAttackWarning>();
     }
 
@@ -50,9 +44,9 @@ public class EnemyAttackController : MonoBehaviour
             isParrySuccess = false; //초기화
 
             attackPrepareTime = Random.Range(attackPrePareTimeMin, attackPrePareTimeMax);
-            //Debug.Log("준비시간: " + attackPrepareTime);
+            Debug.Log("준비시간: " + attackPrepareTime);
 
-            //Debug.Log("공격 준비");
+            Debug.Log("공격 준비");
             yield return new WaitForSeconds(attackPrepareTime);
 
             yield return StartCoroutine(EnemyAttackDirection(atkDirection));//좌 or 공격
@@ -60,9 +54,8 @@ public class EnemyAttackController : MonoBehaviour
             //패링 성공 유무에 따라서 공격을 입을지, 안 입을지 판단.
             if (!isParrySuccess)
             {
-                //Debug.Log("패링 실패");
+                Debug.Log("패링 실패");
                 GameManager.Instance.TakeDamage(EnemyBombDamage);
-                StartCoroutine(FailParrying());
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
@@ -76,14 +69,14 @@ public class EnemyAttackController : MonoBehaviour
     {
         if (atkDir == 0)
         {
-            //Debug.Log("좌 공격 시작");
+            Debug.Log("좌 공격 시작");
             //적의 공격이 좌에서 올 경우
             //+)여기에 좌에서 오는 효과 적용
             attackWarning.WarnEffect(0, attackComingTime);
         }
         else
         {
-            //Debug.Log("우 공격 시작");
+            Debug.Log("우 공격 시작");
             //적의 공격이 우에서 올 경우
             //+)여기에 우에서 오는 효과 적용
             attackWarning.WarnEffect(1, attackComingTime);
@@ -91,7 +84,7 @@ public class EnemyAttackController : MonoBehaviour
         //여기다가 UI상에서 공격이 날라가는 메서드 적용
 
         yield return new WaitForSeconds(attackComingTime);
-        //Debug.Log("공격이 바로 앞까지 옴");
+        Debug.Log("공격이 바로 앞까지 옴");
         attackWarning.WarnParry(atkDir, parryTime);
         isParryAble = true;
         yield return new WaitForSeconds(parryTime);
@@ -112,7 +105,7 @@ public class EnemyAttackController : MonoBehaviour
             {
                 if (atkDirection == 0)
                 {
-                    //Debug.Log("좌 패링 성공");
+                    Debug.Log("좌 패링 성공");
                     arrowSystem.Anim.enabled = true;
                     arrowSystem.Anim.SetTrigger("LeftParrying");
                     isParrying = true;
@@ -121,9 +114,8 @@ public class EnemyAttackController : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("우 패링 실패");
+                    Debug.Log("우 패링 실패");
                     isParrySuccess = false;
-                    StartCoroutine(FailParrying());
                 }
                 TryParry();
                 isParryAble = false;
@@ -133,18 +125,17 @@ public class EnemyAttackController : MonoBehaviour
             {
                 if (atkDirection == 1)
                 {
-                    //Debug.Log("우 패링 성공");
+                    Debug.Log("우 패링 성공");
                     arrowSystem.Anim.enabled = true;
                     arrowSystem.Anim.SetTrigger("RightParrying");
-                    isParrying = true;
+                    isParrying = true; 
                     StartCoroutine(IsParrying());
                     isParryAble = true;
                 }
                 else
                 {
-                    //Debug.Log("좌 패링 실패");
+                    Debug.Log("좌 패링 실패");
                     isParrySuccess = false;
-                    StartCoroutine(FailParrying());
                 }
                 TryParry();
                 isParryAble = false;
@@ -154,44 +145,8 @@ public class EnemyAttackController : MonoBehaviour
 
     IEnumerator IsParrying()
     {
-        ThrowBackGround.SetActive(true);
-        ArrowBackground.SetActive(false);
-        ArrowEffect.SetActive(false);
-        InputTimer.SetActive(false);
-        yield return new WaitForSeconds(1f);
-        if (atkDirection == 0)
-        {
-            boom_Left.GetComponent<Image>().enabled = true;
-        }
-        else
-        {
-            boom_Right.GetComponent<Image>().enabled = true;
-        }
-        SoundManager.Instance.PlaySound(8); //패링 성공 사운드 재생
-        yield return new WaitForSeconds(1f);
-        ThrowBackGround.SetActive(false);
-        ArrowBackground.SetActive(true);
-        ArrowEffect.SetActive(true);
-        InputTimer.SetActive(true);
-        boom_Left.GetComponent<Image>().enabled = false;
-        boom_Right.GetComponent<Image>().enabled = false;
+        yield return new WaitForSeconds(2f);
         isParrying = false;
-    }
-
-    IEnumerator FailParrying()
-    {
-        if (atkDirection == 0)
-        {
-            fail_parry_Left.GetComponent<Image>().enabled = true;
-            yield return new WaitForSeconds(1f);
-            fail_parry_Left.GetComponent<Image>().enabled = false;
-        }
-        else
-        {
-            fail_parry_Right.GetComponent<Image>().enabled = true;
-            yield return new WaitForSeconds(1f);
-            fail_parry_Right.GetComponent<Image>().enabled = false;
-        }
     }
 
     /// <summary>

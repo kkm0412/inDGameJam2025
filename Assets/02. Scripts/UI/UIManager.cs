@@ -78,18 +78,17 @@ public class UIManager : MonoBehaviour
 
         HealthTextActive(true);
     }
-    public IEnumerator UpdateEnemyHealth(int value)
+    public IEnumerator UpdateEnemyHealth(int value, bool isDamage)
     {
-        value = -value;
-        enemyHealthText.gameObject.SetActive(true);
-        if (value < 0)
+        playerHealthText.gameObject.SetActive(true);
+        if (isDamage)
         {
-            enemyHealthText.text = value.ToString();
+            enemyHealthText.text = "- " + value.ToString();
             enemyHealthText.color = Color.red; // 적이 데미지를 입으면 빨간색으로 표시
         }
         else
         {
-            enemyHealthText.text = "+" + value.ToString();
+            enemyHealthText.text = value.ToString();
             enemyHealthText.color = Color.green; // 적이 회복하면 초록색으로 표시
         }
 
