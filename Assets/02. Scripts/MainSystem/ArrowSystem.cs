@@ -114,7 +114,7 @@ public class ArrowSystem : MonoBehaviour
 
         animator.enabled = true; // 대기 애니메이션 활성화
 
-        arrowBackground.SetActive(false);
+        arrowBackground.SetActive(true);
         if (nowStage < 3)
         {
             isReverse = false;
@@ -367,6 +367,7 @@ public class ArrowSystem : MonoBehaviour
             Stage.Instance.StopAllCoroutines();
             StopCoroutine(DelayedStartArrowInput());
             StopInput();
+            arrowBackground.SetActive(false);
             yield return new WaitForSeconds(1f);
             enemyDieEffect.gameObject.SetActive(false);
             Debug.Log("적 사망2");
