@@ -113,6 +113,8 @@ public class EnemyAttackWarning : MonoBehaviour
             yield return null;
         }
 
+        SoundManager.Instance.PlaySound(10);
+
         // 2단계: 점점 어두워짐
         while (color.a > 0)
         {
@@ -128,6 +130,8 @@ public class EnemyAttackWarning : MonoBehaviour
             warning[warnDir].color = color;
             yield return null;
         }
+
+        SoundManager.Instance.PlaySound(10);
 
         // 4단계: 다시 점점 어두워짐
         while (color.a > 0)
@@ -189,6 +193,7 @@ public class EnemyAttackWarning : MonoBehaviour
     /// <returns></returns>
     IEnumerator WarnEffectDanger(int warnDir, float parryTime)
     {
+        SoundManager.Instance.PlaySound(10);
         float timer = 0f;   //패링 체크용 타이머
         Debug.Log("timer: " + timer + " parryTime: " + parryTime);
         warningParry[warnDir].enabled = true;

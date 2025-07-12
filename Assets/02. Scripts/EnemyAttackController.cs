@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
-using UnityEngine.XR;
+using UnityEngine.UI;
 
 
 //적이 공격을 하기 위한 시스템.
@@ -29,6 +29,11 @@ public class EnemyAttackController : MonoBehaviour
     private bool isTryParry = false; //패링 시도 유무. 사용 X 사이클 생김
     public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
+
+    public GameObject parryEffect; //패링 성공시 나오는 효과
+    public GameObject parryEffect2;
+    public GameObject parryFailEffect; //패링 실패시 나오는 효과
+    public GameObject parryFailEffect2; //패링 실패시 나오는 효과
 
     void Start()
     {
@@ -56,7 +61,27 @@ public class EnemyAttackController : MonoBehaviour
             if (!isParrySuccess)
             {
                 Debug.Log("패링 실패");
+                if (atkDirection == 0)
+                {
+                    parryFailEffect.GetComponent<Image>().enabled = true;
+                }
+                else
+                {
+                    parryFailEffect2.GetComponent<Image>().enabled = true;
+                }
+                SoundManager.Instance.PlaySound(8);
                 GameManager.Instance.TakeDamage(EnemyBombDamage);
+
+                yield return new WaitForSeconds(1f);
+
+                if (atkDirection == 0)
+                {
+                    parryFailEffect.GetComponent<Image>().enabled = false;
+                }
+                else
+                {
+                    parryFailEffect2.GetComponent<Image>().enabled = false;
+                }
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
@@ -151,11 +176,27 @@ public class EnemyAttackController : MonoBehaviour
         arrowSystem.arrowParent.gameObject.SetActive(false);
         arrowSystem.arrowBackground.SetActive(false);
         arrowSystem.createBread.SetActive(false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
+        if (atkDirection == 0)
+        {
+            parryEffect.GetComponent<Image>().enabled = true;
+            parryEffect.GetComponent<Animator>().enabled = true;
+        }
+        else
+        {
+            parryEffect2.GetComponent<Image>().enabled = true;
+            parryEffect2.GetComponent<Animator>().enabled = true;
+        }
+        SoundManager.Instance.PlaySound(6);
+        yield return new WaitForSeconds(1f);
         arrowSystem.throwBackGround.SetActive(false);
         arrowSystem.arrowParent.gameObject.SetActive(true);
         arrowSystem.arrowTimer.gameObject.SetActive(true);
         arrowSystem.arrowBackground.SetActive(true);
+        parryEffect.GetComponent<Image>().enabled = false;
+        parryEffect2.GetComponent<Image>().enabled = false;
+        parryEffect.GetComponent<Animator>().enabled = false;
+        parryEffect2.GetComponent<Animator>().enabled = false;
 
         isParrying = false;
     }

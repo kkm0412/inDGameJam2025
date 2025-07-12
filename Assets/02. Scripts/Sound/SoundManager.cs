@@ -18,6 +18,7 @@ public class SoundManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // 이 오브젝트를 씬 전환 시에도 유지
+            
         }
         else
         {
@@ -25,6 +26,9 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+    }
     public void PlaySound(int index)
     {
         if (index < 0 || index >= soundEffects.Count)
