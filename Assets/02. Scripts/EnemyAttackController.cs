@@ -40,10 +40,9 @@ public class EnemyAttackController : MonoBehaviour
     void Start()
     {
         attackWarning = GetComponent<EnemyAttackWarning>();
-        StartCoroutine(EnemyAttack());
     }
 
-    IEnumerator EnemyAttack()
+    public IEnumerator EnemyAttack()
     {
         while (true)
         {

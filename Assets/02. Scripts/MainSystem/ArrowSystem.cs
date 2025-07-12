@@ -348,6 +348,7 @@ public class ArrowSystem : MonoBehaviour
 
     IEnumerator DelayThrow()
     {
+        enemySprite.sprite = GetEnemySprite();
         arrowTimer.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
         explosiveAnim.Play("enemyhit Animation");
@@ -370,15 +371,15 @@ public class ArrowSystem : MonoBehaviour
             explosiveAnim.enabled = false;
             enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
             enemyDieEffect.enabled = true;
-            enemyAttackController.StopAllCoroutines();
+            GameManager.Instance.StopCoroutine(GameManager.Instance.enemyCoro);
             Stage.Instance.StopAllCoroutines();
             StopCoroutine(DelayedStartArrowInput());
             StopInput();
             arrowBackground.SetActive(false);
             yield return new WaitForSeconds(1f);
             enemyDieEffect.gameObject.SetActive(false);
-            Debug.Log("적 사망2");
-
+            throwBackGround.SetActive(false);
+            GameManager.Instance.StageEnd();
         }
     }
     private Sprite GetEnemySprite()
