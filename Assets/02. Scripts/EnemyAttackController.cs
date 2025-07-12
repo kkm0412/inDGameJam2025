@@ -37,7 +37,7 @@ public class EnemyAttackController : MonoBehaviour
         StartCoroutine(EnemyAttack());
     }
 
-    IEnumerator EnemyAttack()
+    public IEnumerator EnemyAttack()
     {
         while (true)
         {
