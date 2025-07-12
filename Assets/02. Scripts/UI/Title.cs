@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Title : MonoBehaviour
 {
     public GameObject TitlePlayer;
     public GameObject blackScreenImage;
+    public GameObject PauseCanvas;
+
+    bool isPause = false;
     void Start()
     {
         SoundManager.Instance.PlayBackgroundMusic(0);
@@ -16,7 +21,10 @@ public class Title : MonoBehaviour
 
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GamePause();
+        }
     }
 
     public void StartGame()
@@ -28,6 +36,30 @@ public class Title : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("게임 종료");
+    }
+
+    public void GamePause()
+    {
+        isPause = !isPause ? true : false;
+
+        if (isPause)
+        {
+            Time.timeScale = 0f;
+            PauseCanvas.SetActive(true);
+            SoundManager.Instance.backgroundAudioSource.Pause();
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            PauseCanvas.SetActive(false);
+            SoundManager.Instance.backgroundAudioSource.UnPause();
+        }
+    }
+
+    public void BackToTitle()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name.ToString());
     }
 
     IEnumerator StartGameCoroutine()
