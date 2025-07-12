@@ -39,6 +39,7 @@ public class UIManager : MonoBehaviour
             int minutes = (int)(GameManager.Instance.leftStageTime / 60);
             int seconds = (int)(GameManager.Instance.leftStageTime % 60);
             stageTimer.text = string.Format("{0:D2}:{1:D2}", minutes, seconds);
+            enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         }
 
         if (GameManager.Instance.Combo > 0)

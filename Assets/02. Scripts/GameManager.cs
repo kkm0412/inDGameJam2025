@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
 
     public void EnmeyOver()
     {
-
+        Debug.Log("적 사망");
     }
 
     void StageEnd()

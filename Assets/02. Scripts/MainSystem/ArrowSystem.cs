@@ -341,12 +341,25 @@ public class ArrowSystem : MonoBehaviour
         explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
         explosiveAnim.enabled = true;
         explosiveAnim.Play("enemyhit Animation");
-        Stage.Instance.TakeDamage(GameManager.Instance.PlayerBombDamage);
-        yield return new WaitForSeconds(1f);
-        explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
-        explosiveAnim.enabled = false;
-        arrowTimer.gameObject.SetActive(true);
-        throwBackGround.SetActive(false);
+        Stage.Instance.TakeDamage(1000);
+        if (Stage.Instance.GetStageData().enemyHp > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            arrowTimer.gameObject.SetActive(true);
+            throwBackGround.SetActive(false);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            Debug.Log("적 사망2");
+            StopInput();
+            enemyAttackController.StopAllCoroutines();
+            Stage.Instance.StopAllCoroutines();
+        }
     }
 
     private IEnumerator DelayedStartArrowInput()
@@ -377,6 +390,7 @@ public class ArrowSystem : MonoBehaviour
     {
         isActive = false;
         ClearArrow();
+        StopAllCoroutines();
         arrowTimer.gameObject.SetActive(false);
     }
 
