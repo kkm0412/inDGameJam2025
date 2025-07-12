@@ -12,11 +12,15 @@ public class DialogManager : MonoBehaviour
 
 
     public GameObject dialogUI;
-    public TMP_Text dialogText;
     public Image cutSceneImage;
     public Dialog[] dialogList;
     public Dialog currentDialog;
     public List<DialogData> currentText;
+
+    public Image startButtonImage;
+    public Button nextDialogButton;
+    public Button endDialogButton;
+
     public bool isTalking = false;
     int textIndex = 0;
 
@@ -44,7 +48,6 @@ public class DialogManager : MonoBehaviour
         {
             currentText.Add(dialog.dialogList[i]);
         }
-        cutSceneImage.sprite = dialog.cutSceneImage;
         DisplayText();
     }
 
@@ -52,6 +55,7 @@ public class DialogManager : MonoBehaviour
     {
         dialogUI.SetActive(true);
         InitText(dialogList[GameManager.Instance.nowStage - 1]);
+        nextDialogButton.gameObject.SetActive(true  );
     }
 
     public void DisAppearDialogUI()
@@ -61,15 +65,16 @@ public class DialogManager : MonoBehaviour
 
     public void DisplayText()
     {
-        dialogText.text = currentText[textIndex].dialogText;
+        cutSceneImage.sprite = currentText[textIndex].cutSceneImage;
     }
 
     public void NextText()
     {
         if (textIndex >= currentText.Count - 1)
         {
-            EndDialog();
-            return;
+            endDialogButton.gameObject.SetActive(true);
+            startButtonImage.gameObject.SetActive(true);
+            nextDialogButton.gameObject.SetActive(false);
         }
         else
         {
@@ -81,9 +86,13 @@ public class DialogManager : MonoBehaviour
     public void EndDialog()
     {
         isTalking = false;
+
+        endDialogButton.gameObject.SetActive(false);
+        startButtonImage.gameObject.SetActive(false);
+        nextDialogButton.gameObject.SetActive(false);
+
         textIndex = 0;
         currentText.Clear();
-        dialogText.text = "";
         GameManager.Instance.StageStart();
         DisAppearDialogUI();
     }

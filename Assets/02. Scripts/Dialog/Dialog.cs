@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "New Dialog", menuName = "Game/DialogData")]
 public class Dialog : ScriptableObject
-{
-    public Sprite cutSceneImage;
+{   
     public List<DialogData> dialogList = new ();
 
 }
@@ -15,5 +14,5 @@ public class Dialog : ScriptableObject
 [System.Serializable]
 public class DialogData
 {
-    public string dialogText;
+    public Sprite cutSceneImage;
 }

@@ -146,7 +146,17 @@ public class EnemyAttackController : MonoBehaviour
 
     IEnumerator IsParrying()
     {
+        arrowSystem.throwBackGround.SetActive(true);
+        arrowSystem.arrowTimer.gameObject.SetActive(false);
+        arrowSystem.arrowParent.gameObject.SetActive(false);
+        arrowSystem.arrowBackground.SetActive(false);
+        arrowSystem.createBread.SetActive(false);
         yield return new WaitForSeconds(2f);
+        arrowSystem.throwBackGround.SetActive(false);
+        arrowSystem.arrowParent.gameObject.SetActive(true);
+        arrowSystem.arrowTimer.gameObject.SetActive(true);
+        arrowSystem.arrowBackground.SetActive(true);
+
         isParrying = false;
     }
 

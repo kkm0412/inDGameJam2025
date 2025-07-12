@@ -88,12 +88,21 @@ public class GameManager : MonoBehaviour
     {
         gameCoro = StartCoroutine(GameStart());
         enemyCoro = StartCoroutine(enemyAttackController.EnemyAttack());
+       
     }
 
     IEnumerator GameStart()
     {
+        arrowSystem.throwBackGround.SetActive(false);
+        arrowSystem.customer.gameObject.SetActive(false);
+        arrowSystem.waitingcustomer.gameObject.SetActive(false);
+        arrowSystem.waitingCustomer2.gameObject.SetActive(false);
+        arrowSystem.arrowTimer.gameObject.SetActive(false);
+        arrowSystem.arrowBackground.SetActive(false);
         yield return new WaitForSeconds(3f);
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
+        Stage.Instance.StartAutoHeal();
+        arrowSystem.enemySprite.sprite = arrowSystem.GetEnemySprite();
         stageStart = true;
         arrowSystem.customer.gameObject.SetActive(true);
         arrowSystem.StartArrowInput();
@@ -126,9 +135,10 @@ public class GameManager : MonoBehaviour
         arrowSystem.StopInput();
     }
 
-    public void EnmeyOver()
+    public void EnemyOver()
     {
         stageStart = false;
+        
         Debug.Log("적 사망");
     }
 

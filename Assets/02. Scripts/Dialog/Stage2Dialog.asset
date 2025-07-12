@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d40b71639d9f6c40b7713448d81cc0a, type: 3}
   m_Name: Stage2Dialog
   m_EditorClassIdentifier: 
-  cutSceneImage: {fileID: 21300000, guid: 053a7a90f155d8e48a4992a7d3b2cd6f, type: 3}
   dialogList:
-  - dialogText: TEST1TEST1
-  - dialogText: TEST1TEST1TEST1
-  - dialogText: TEST1TEST1TEST1TEST1
+  - cutSceneImage: {fileID: 21300000, guid: 85502be18f858c947a65d378170945ee, type: 3}
+  - cutSceneImage: {fileID: 21300000, guid: 059fd2ced3eeabf42b4683582c02c506, type: 3}
