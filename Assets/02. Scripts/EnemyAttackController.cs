@@ -26,7 +26,7 @@ public class EnemyAttackController : MonoBehaviour
     private bool isParryAble = false;  //공격을 패링할 수 있음. True일시 패링 활성화
     [SerializeField] private float parryTime = 1f;  //패링 시간 지정
 
-    private bool isTryParry = false; //패링 시도 유무. 사용 X 사이클 생김
+    //private bool isTryParry = false; //패링 시도 유무. 사용 X 사이클 생김
     public bool isParrying = false;
     private bool isParrySuccess = false; //패링 성공 유무
 
@@ -129,7 +129,7 @@ public class EnemyAttackController : MonoBehaviour
                     Debug.Log("우 패링 성공");
                     arrowSystem.Anim.enabled = true;
                     arrowSystem.Anim.SetTrigger("RightParrying");
-                    isParrying = true; 
+                    isParrying = true;
                     StartCoroutine(IsParrying());
                     isParryAble = true;
                 }
