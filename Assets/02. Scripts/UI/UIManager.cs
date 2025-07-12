@@ -19,14 +19,11 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         GameManager.OnHpChanged += UpdatePlayerHp;
-        Stage.OnEnemyHpChanged += UpdateEnemyHp;
     }
 
     private void OnDisable()
     {
         GameManager.OnHpChanged -= UpdatePlayerHp;
-        Stage.OnEnemyHpChanged -= UpdateEnemyHp;
-
     }
 
     private void Start()
