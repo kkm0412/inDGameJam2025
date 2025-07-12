@@ -61,6 +61,7 @@ public class Stage : MonoBehaviour
     {
         stageData.enemyHp -= amount;
         Debug.Log(stageData.enemyHp);
+
         if (stageData.enemyHp <= 0 )
         {
             GameManager.Instance.EnemyOver();

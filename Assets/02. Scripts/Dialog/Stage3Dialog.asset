@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d40b71639d9f6c40b7713448d81cc0a, type: 3}
   m_Name: Stage3Dialog
   m_EditorClassIdentifier: 
-  cutSceneImage: {fileID: 1799416301, guid: a9b56600a64de224b8773df43365cfe3, type: 3}
   dialogList:
-  - dialogText: "\uD14C\uC2A4\uD2B83"
+  - cutSceneImage: {fileID: 21300000, guid: edb1da71226295e49b96a5bdaa225108, type: 3}
+  - cutSceneImage: {fileID: 21300000, guid: 76a9bad83025c314880c9bfb50870045, type: 3}
+  - cutSceneImage: {fileID: 21300000, guid: ba141e2d891468e4a862c0239c84e08b, type: 3}

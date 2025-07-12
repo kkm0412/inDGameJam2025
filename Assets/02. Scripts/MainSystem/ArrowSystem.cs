@@ -298,6 +298,11 @@ public class ArrowSystem : MonoBehaviour
                 activeCoroutines[arrowObj] = coro;
             }
 
+            if (GetMixHandSprite(key.ToString()) != null)
+            {
+                sr.sprite = GetMixHandSprite(key.ToString());
+            }
+
             currentKey++;
             SoundManager.Instance.PlaySound(0); // 사운드 재생
 
@@ -417,6 +422,7 @@ public class ArrowSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
         explosiveAnim.Play("enemyhit Animation");
         Stage.Instance.TakeDamage(60);
+        GameManager.Instance.GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
         enemySprite.sprite = GetEnemySprite();
         explosiveAnim.enabled = true;

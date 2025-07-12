@@ -103,13 +103,16 @@ public class DialogManager : MonoBehaviour
 
     IEnumerator FadeIn()
     {
+        anim.gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 1);
         anim.gameObject.SetActive(true);
         labels[GameManager.Instance.nowStage - 1].SetActive(true);
         yield return new WaitForSeconds(5f);
         labels[GameManager.Instance.nowStage - 1].SetActive(false);
         anim.enabled = true;
+        anim.Play("Black2");
         yield return new WaitForSeconds(1f);
         anim.enabled = false;
+        
         anim.gameObject.SetActive(false);
     }
 }

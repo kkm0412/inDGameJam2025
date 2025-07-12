@@ -159,7 +159,10 @@ public class GameManager : MonoBehaviour
     public IEnumerator NextStageFadeOut()
     {
         fadeOutBlack.SetActive(true);
+        fadeOutBlack.GetComponent<Animator>().enabled = true;
         yield return new WaitForSeconds(1.3f);
+        fadeOutBlack.GetComponent<Animator>().enabled = false;
+
         fadeOutBlack.SetActive(false);
         clearUI.SetActive(false);
         TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
