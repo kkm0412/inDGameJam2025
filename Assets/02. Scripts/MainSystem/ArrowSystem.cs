@@ -21,6 +21,7 @@ public class ArrowSystem : MonoBehaviour
     public GameObject waitingcustomer;
     public GameObject waitingCustomer2;
     public GameObject createBread;
+    public GameObject arrowBackground;
 
     public bool isReverse;
 
@@ -35,7 +36,6 @@ public class ArrowSystem : MonoBehaviour
     private List<ArrowKey> sequence = new();
     private int currentKey = 0;
     private bool isActive = false;
-    private Queue<int> customerQueue = new Queue<int>();
     private List<int> customerIndexList = new List<int>();
 
     private Animator animator;
@@ -108,6 +108,8 @@ public class ArrowSystem : MonoBehaviour
         ClearArrow();
 
         animator.enabled = true; // 대기 애니메이션 활성화
+
+        arrowBackground.SetActive(true);
 
         if (nowStage < 3)
         {
@@ -311,6 +313,7 @@ public class ArrowSystem : MonoBehaviour
         GameManager.Instance.IncreCombo();
         
         ClearArrow();
+        arrowBackground.SetActive(false);
         Debug.Log("성공");
         GameManager.Instance.TakeDamage(-increHp);
         if (isBombReady)
@@ -361,6 +364,7 @@ public class ArrowSystem : MonoBehaviour
         isActive = false;
         ClearArrow();
         arrowTimer.gameObject.SetActive(false);
+        arrowBackground.SetActive(false);
         Debug.Log("실패");
         SoundManager.Instance.PlaySound(3); // 사운드 재생
         StartCoroutine(DelayedFailInput());
