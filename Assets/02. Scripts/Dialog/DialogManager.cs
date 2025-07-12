@@ -84,7 +84,7 @@ public class DialogManager : MonoBehaviour
         textIndex = 0;
         currentText.Clear();
         dialogText.text = "";
-        //GameManager.Instance.StageStart();
+        GameManager.Instance.StageStart();
         DisAppearDialogUI();
     }
 }

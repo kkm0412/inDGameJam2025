@@ -34,7 +34,7 @@ public class EnemyAttackController : MonoBehaviour
     {
         //gameManager = GetComponent<GameManager>();
         attackWarning = GetComponent<EnemyAttackWarning>();
-        StartCoroutine(EnemyAttack());
+        //StartCoroutine(EnemyAttack());
     }
 
     public IEnumerator EnemyAttack()
