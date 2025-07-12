@@ -65,6 +65,7 @@ public class UIManager : MonoBehaviour
         {
             playerHealthText.text = value.ToString();
             playerHealthText.color = Color.red; // 플레이어가 데미지를 입으면 빨간색으로 표시
+            SoundManager.Instance.PlaySound(8); // 데미지 사운드 재생
         }
         else
         {
