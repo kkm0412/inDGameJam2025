@@ -15,6 +15,7 @@ public class ArrowSystem : MonoBehaviour
     public Transform arrowParent;
 
     public EnemyAttackController enemyAttackController;
+    public GameObject throwBackGround;
 
     public GameObject customer;
     public GameObject waitingcustomer;
@@ -45,6 +46,7 @@ public class ArrowSystem : MonoBehaviour
     {
         animator = playerHand.GetComponent<Animator>();
         sr = playerHand.GetComponent<SpriteRenderer>();
+        throwBackGround.SetActive(false);
     }
 
     private void Start()
@@ -313,9 +315,11 @@ public class ArrowSystem : MonoBehaviour
         GameManager.Instance.TakeDamage(-increHp);
         if (isBombReady)
         {
+            throwBackGround.SetActive(true);
             animator.SetTrigger("Throw");
             isBombReady = false;
             leftBombCooldown = bombCooldown;
+            StartCoroutine(DelayThrow());
 
         }
         else
@@ -326,6 +330,16 @@ public class ArrowSystem : MonoBehaviour
         SoundManager.Instance.PlaySound(2); // 사운드 재생
         isActive = false;
         StartCoroutine(DelayedStartArrowInput());
+    }
+
+    IEnumerator DelayThrow()
+    {
+        arrowTimer.gameObject.SetActive(false);
+        yield return new WaitForSeconds(1f);
+
+        yield return new WaitForSeconds(1f);
+        arrowTimer.gameObject.SetActive(true);
+        throwBackGround.SetActive(false);
     }
 
     private IEnumerator DelayedStartArrowInput()
