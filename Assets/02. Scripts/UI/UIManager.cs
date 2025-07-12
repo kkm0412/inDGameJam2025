@@ -9,21 +9,17 @@ public class UIManager : MonoBehaviour
 {
     public TMP_Text stageTimer;
     public TMP_Text playerHpText;
-    public TMP_Text enemyHpText;
     public TMP_Text playerComboText;
     public TMP_Text reverse;
 
     private void OnEnable()
     {
         GameManager.OnHpChanged += UpdatePlayerHp;
-        Stage.OnEnemyHpChanged += UpdateEnemyHp;
     }
 
     private void OnDisable()
     {
         GameManager.OnHpChanged -= UpdatePlayerHp;
-        Stage.OnEnemyHpChanged -= UpdateEnemyHp;
-
     }
 
     private void Start()
@@ -39,7 +35,6 @@ public class UIManager : MonoBehaviour
             int minutes = (int)(GameManager.Instance.leftStageTime / 60);
             int seconds = (int)(GameManager.Instance.leftStageTime % 60);
             stageTimer.text = string.Format("{0:D2}:{1:D2}", minutes, seconds);
-            enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         }
 
         if (GameManager.Instance.Combo > 0)
@@ -58,10 +53,5 @@ public class UIManager : MonoBehaviour
     void UpdatePlayerHp(int value)
     {
         playerHpText.text = value.ToString();
-    }
-
-    void UpdateEnemyHp(int value)
-    {
-        enemyHpText.text = value.ToString();
     }
 }

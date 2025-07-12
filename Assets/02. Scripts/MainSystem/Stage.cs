@@ -1,75 +1,33 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Stage : MonoBehaviour
 {
-    public static Stage Instance { get; private set; }
-
-    public StageDatabase stageBase;
-    private StageData stageData;
-
-    bool stageStart = false;
-
-    public static Action<int> OnEnemyHpChanged;
-
+    private ArrowSystem arrowSystem;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-    
-    private void InitStageData(StageDatabase data)
-    {
-        stageData = new StageData(data);
-    }
-
-    public StageData GetStageData()
-    {
-        return stageData;
+        
+        arrowSystem = GetComponent<ArrowSystem>();
     }
 
     private void Start()
     {
-        InitStageData(stageBase);
-        OnEnemyHpChanged?.Invoke(GetStageData().enemyHp);
-
+        arrowSystem.customer.gameObject.SetActive(false);
+        StartCoroutine(GameStart());
     }
 
     private void Update()
     {
-        if (GameManager.Instance.stageStart && !stageStart)
-        {
-            StartCoroutine(EnemyAutoHeal(stageData.enemyHealAmount, stageData.enemyHealInterval));
-            stageStart = true;
-        }
+        
     }
 
-    public void TakeDamage(int amount)
+    IEnumerator GameStart()
     {
-        stageData.enemyHp -= amount;
-        Debug.Log(stageData.enemyHp);
-        if (stageData.enemyHp <= 0 )
-        {
-            GameManager.Instance.EnmeyOver();
-        }
+        yield return new WaitForSeconds(3f);
+        GameManager.Instance.stageStart = true;
+        arrowSystem.customer.gameObject.SetActive(true);
+        arrowSystem.StartArrowInput();
     }
-
-    IEnumerator EnemyAutoHeal(int amount, float interval)
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(interval);
-            TakeDamage(-amount);
-        }
-    }
-
 }
