@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
     public void IncreCombo()
     {
         combo += 1;
+        this.gameObject.GetComponent<UIManager>().playerComboText.GetComponent<Animator>().SetTrigger("isCombo");
     }
 
     public void ResetCombo()
