@@ -113,6 +113,11 @@ public class GameManager : MonoBehaviour
         arrowSystem.StopInput();
     }
 
+    public void EnmeyOver()
+    {
+
+    }
+
     void StageEnd()
     {
         Debug.Log("스테이지 종료");

@@ -339,9 +339,12 @@ public class ArrowSystem : MonoBehaviour
         arrowTimer.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
         explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
-        explosiveAnim.Play("");
+        explosiveAnim.enabled = true;
+        explosiveAnim.Play("enemyhit Animation");
+        Stage.Instance.TakeDamage(GameManager.Instance.PlayerBombDamage);
         yield return new WaitForSeconds(1f);
         explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+        explosiveAnim.enabled = false;
         arrowTimer.gameObject.SetActive(true);
         throwBackGround.SetActive(false);
     }
