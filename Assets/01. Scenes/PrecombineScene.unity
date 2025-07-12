@@ -723,6 +723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cc42dd9843c1d488f379666839726b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyAttackController: {fileID: 0}
   arrowSystem: {fileID: 379776598}
   playerHp: 100
   playerHeal: 1
@@ -732,6 +733,7 @@ MonoBehaviour:
   stageTimeLimit: 120
   nowStage: 1
   stageStart: 0
+  clearUI: {fileID: 0}
 --- !u!114 &124712917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,7 +767,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TitlePlayer: {fileID: 2048162139}
   blackScreenImage: {fileID: 420607100}
-  PauseCanvas: {fileID: 663728818}
 --- !u!1 &124756432
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,14 +821,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowSystem: {fileID: 379776598}
-  ThrowBackGround: {fileID: 1190174296}
-  ArrowBackground: {fileID: 964099175}
-  ArrowEffect: {fileID: 2006861938}
-  InputTimer: {fileID: 1625274351}
-  boom_Left: {fileID: 961001640}
-  boom_Right: {fileID: 422692892}
-  fail_parry_Left: {fileID: 1558922670}
-  fail_parry_Right: {fileID: 1852537041}
   EnemyBombPrefab: {fileID: 99332992095375057, guid: 322f3a9259f7ef14c9c9b9e4e3db2ee6, type: 3}
   EnemyBombDamage: 5
   attackPrePareTimeMin: 5
@@ -862,7 +855,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a508cedc7164ee547b717efa7233b854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stageBase: {fileID: 11400000, guid: b1a44beaf602cc045b5576c82ad6f556, type: 2}
+  stageBase:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &127638451
 GameObject:
   m_ObjectHideFlags: 0
@@ -2523,7 +2519,6 @@ MonoBehaviour:
   waitingCustomer2: {fileID: 1039455066}
   createBread: {fileID: 285136934}
   arrowBackground: {fileID: 964099175}
-  boomBackground: {fileID: 23844705}
   isReverse: 0
   isBombReady: 0
   leftBombCooldown: 0
@@ -9192,7 +9187,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cfc99f8405fb8384d886bb19a590ddd5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 067ae4c4078cecd46a34d56a73dbf22c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
