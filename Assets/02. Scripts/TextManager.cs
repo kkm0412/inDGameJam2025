@@ -41,6 +41,7 @@ public class TextManager : MonoBehaviour
 
         textCanvas.SetActive(false);
         //PrintText(1); //테스트 용도
+        //PrintText(2); //테스트 용도
     }
 
     private void Update()
