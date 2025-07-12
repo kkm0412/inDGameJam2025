@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 
 public class UIManager : MonoBehaviour
 {
     public TMP_Text stageTimer;
     public TMP_Text playerHpText;
+    public TMP_Text enemyHpText;
     public TMP_Text playerComboText;
     public TMP_Text playerHealthText;
     public TMP_Text enemyHealthText;
@@ -17,11 +19,14 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         GameManager.OnHpChanged += UpdatePlayerHp;
+        Stage.OnEnemyHpChanged += UpdateEnemyHp;
     }
 
     private void OnDisable()
     {
         GameManager.OnHpChanged -= UpdatePlayerHp;
+        Stage.OnEnemyHpChanged -= UpdateEnemyHp;
+
     }
 
     private void Start()
@@ -48,7 +53,7 @@ public class UIManager : MonoBehaviour
         {
             playerComboText.gameObject.SetActive(false);
         }
-
+        enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
 
     }
 
@@ -106,5 +111,10 @@ public class UIManager : MonoBehaviour
         {
             enemyHealthText.gameObject.SetActive(false);
         }
+    }
+
+    void UpdateEnemyHp(int value)
+    {
+        enemyHpText.text = value.ToString();
     }
 }

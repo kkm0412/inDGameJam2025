@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     public float leftStageTime { get; private set; }
 
     // 게임 시작 시의 스테이지 레벨 (0부터 시작 아님, 1부터 시작)
-    public int nowStage = 2;
+    public int nowStage = 1;
 
     public bool stageStart = false;
 
