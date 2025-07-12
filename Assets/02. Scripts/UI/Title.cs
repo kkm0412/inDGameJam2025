@@ -9,6 +9,7 @@ public class Title : MonoBehaviour
     public GameObject blackScreenImage;
     void Start()
     {
+        SoundManager.Instance.PlayBackgroundMusic(0);
         blackScreenImage.GetComponent<Animator>().enabled = false;
         blackScreenImage.SetActive(false);
     }
@@ -33,9 +34,13 @@ public class Title : MonoBehaviour
     {
         TitlePlayer.GetComponent<Animator>().SetTrigger("GameStart");
         blackScreenImage.SetActive(true);
+        SoundManager.Instance.backgroundAudioSource.Stop();
         yield return new WaitForSeconds(1f);
         blackScreenImage.GetComponent<Animator>().enabled = true;
         yield return new WaitForSeconds(1f);
+        SoundManager.Instance.PlaySound(7);
+        yield return new WaitForSeconds(1f);
+        SoundManager.Instance.PlayBackgroundMusic(1);
         this.gameObject.SetActive(false);
         
     }

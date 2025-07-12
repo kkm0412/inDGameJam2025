@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour
     public void TakeDamage(int amount)
     {
         playerHp -= amount;
+        StartCoroutine(this.gameObject.GetComponent<UIManager>().UpdatePlayerHealth(amount));
         OnHpChanged?.Invoke(playerHp);
         if (playerHp <= 0)
         {
