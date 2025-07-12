@@ -16,6 +16,7 @@ public class ArrowSystem : MonoBehaviour
 
     public EnemyAttackController enemyAttackController;
     public GameObject throwBackGround;
+    public Animator explosiveAnim;
 
     public GameObject customer;
     public GameObject waitingcustomer;
@@ -40,6 +41,7 @@ public class ArrowSystem : MonoBehaviour
 
     private Animator animator;
     public Animator Anim => animator;
+
     private SpriteRenderer sr;
 
     private void Awake()
@@ -336,8 +338,10 @@ public class ArrowSystem : MonoBehaviour
     {
         arrowTimer.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
-
+        explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
+        explosiveAnim.Play("");
         yield return new WaitForSeconds(1f);
+        explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
         arrowTimer.gameObject.SetActive(true);
         throwBackGround.SetActive(false);
     }
