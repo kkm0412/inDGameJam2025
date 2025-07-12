@@ -9,12 +9,14 @@ using UnityEngine.XR;
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
+    GameManager gameManager;
     EnemyAttackWarning attackWarning;
 
     public ArrowSystem arrowSystem;
 
     private int atkDirection = 0; //0일시 좌, 1일시 우
-    [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩
+    [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩   //현재 폭탄 이펙트 없어서 사용 X
+    [SerializeField] private int EnemyBombDamage = 5;   //폭탄의 데미지, 패링 실패시 입는 피해량
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
     [SerializeField] private float attackPrePareTimeMax;    //적 공격 준비시간 최대
     private float attackPrepareTime;    //적이 공격준비하는 시간, 랜덤으로 지정
@@ -30,6 +32,7 @@ public class EnemyAttackController : MonoBehaviour
 
     void Start()
     {
+        gameManager = GetComponent<GameManager>();
         attackWarning = GetComponent<EnemyAttackWarning>();
         StartCoroutine(EnemyAttack());
     }
@@ -53,6 +56,7 @@ public class EnemyAttackController : MonoBehaviour
             if (!isParrySuccess)
             {
                 Debug.Log("패링 실패");
+                gameManager.TakeDamage(EnemyBombDamage);
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
@@ -90,7 +94,7 @@ public class EnemyAttackController : MonoBehaviour
     }
 
     /// <summary>
-    /// 적의 공격을 패링하는 메서드.
+    /// 적의 공격을 패링하는 메서드. 입력키에 집어넣어서 사용
     /// </summary>
     /// <param name="parryDir">0일시 좌 패링, 1일시 우 패링,</param>
     public void ParryEnemyAttack(int parryDir)
