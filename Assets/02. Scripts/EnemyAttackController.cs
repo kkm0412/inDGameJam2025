@@ -56,7 +56,7 @@ public class EnemyAttackController : MonoBehaviour
             if (!isParrySuccess)
             {
                 Debug.Log("패링 실패");
-                gameManager.TakeDamage(EnemyBombDamage);
+                GameManager.Instance.TakeDamage(EnemyBombDamage);
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
