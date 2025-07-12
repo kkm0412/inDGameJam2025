@@ -113,6 +113,7 @@ public class GameManager : MonoBehaviour
     public void TakeDamage(int amount)
     {
         playerHp -= amount;
+        StartCoroutine(this.gameObject.GetComponent<UIManager>().UpdatePlayerHealth(amount));
         OnHpChanged?.Invoke(playerHp);
         if (playerHp <= 0)
         {
@@ -122,7 +123,7 @@ public class GameManager : MonoBehaviour
 
     void GameOver()
     {
-        Debug.Log("게임 오버");
+        //Debug.Log("게임 오버");
         arrowSystem.StopInput();
     }
 

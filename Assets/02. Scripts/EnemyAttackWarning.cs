@@ -27,6 +27,8 @@ public class EnemyAttackWarning : MonoBehaviour
         warningParry[1] = warningParry[1].GetComponentInChildren<Image>();
         warningParry[0].enabled = false;
         warningParry[1].enabled = false;
+        criticalWarningEffect[0].SetActive(false);
+        criticalWarningEffect[1].SetActive(false);
 
     }
     /// <summary>
@@ -68,7 +70,7 @@ public class EnemyAttackWarning : MonoBehaviour
         }
 
         criticalWarningEffect[dir].SetActive(true);
-        Debug.Log($"[위험] 경고 방향 {dir}에서 최대 밝기에 도달!");
+        //Debug.Log($"[위험] 경고 방향 {dir}에서 최대 밝기에 도달!");
 
         // 일정 시간 후 자동 비활성화
         StartCoroutine(HideCriticalWarningEffect(dir, 3.8f));
@@ -92,7 +94,7 @@ public class EnemyAttackWarning : MonoBehaviour
         float alphaMax = 0.6f;
         float warnSensitivity = 1f / (warnTime - 0.1f) * alphaMax;
 
-        Debug.Log(warnSensitivity);
+        //Debug.Log(warnSensitivity);
 
         bool hasShownEffect = false;
 
@@ -104,7 +106,7 @@ public class EnemyAttackWarning : MonoBehaviour
             // 특정 밝기 이상일 때 효과 실행 (한 번만)
             if (!hasShownEffect && color.a >= 0.5f)
             {
-                ShowCriticalWarningEffect(warnDir);
+                //ShowCriticalWarningEffect(warnDir);
                 hasShownEffect = true;
             }
 
@@ -184,8 +186,9 @@ public class EnemyAttackWarning : MonoBehaviour
     IEnumerator WarnEffectDanger(int warnDir, float parryTime)
     {
         float timer = 0f;   //패링 체크용 타이머
-        Debug.Log("timer: " + timer + " parryTime: " + parryTime);
+        //Debug.Log("timer: " + timer + " parryTime: " + parryTime);
         warningParry[warnDir].enabled = true;
+        criticalWarningEffect[warnDir].SetActive(true);
 
         Color color = warningParry[warnDir].color;
         color.a = 0.5f;
@@ -195,7 +198,7 @@ public class EnemyAttackWarning : MonoBehaviour
         {
             if (isTryParry == true)
             {
-                Debug.Log("패링 시도함");
+                //Debug.Log("패링 시도함");
                 break;
             }
             timer += Time.deltaTime;
@@ -209,6 +212,7 @@ public class EnemyAttackWarning : MonoBehaviour
         //초기화
         warningParry[warnDir].enabled = false;
         isTryParry = false;
+        criticalWarningEffect[warnDir].SetActive(false);
 
     }
 }

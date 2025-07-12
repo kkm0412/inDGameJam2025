@@ -25,6 +25,7 @@ public class ArrowSystem : MonoBehaviour
     public GameObject waitingCustomer2;
     public GameObject createBread;
     public GameObject arrowBackground;
+    public GameObject boomBackground;
 
     public bool isReverse;
 
@@ -87,6 +88,9 @@ public class ArrowSystem : MonoBehaviour
                 isBombReady = true;
             }
         }
+
+        HighlightCurrentArrow();
+
     }
 
     private ArrowKey GetOpposite(ArrowKey key)
@@ -115,6 +119,7 @@ public class ArrowSystem : MonoBehaviour
         animator.enabled = true; // 대기 애니메이션 활성화
 
         arrowBackground.SetActive(true);
+        arrowBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         if (nowStage < 3)
         {
             isReverse = false;
@@ -162,7 +167,7 @@ public class ArrowSystem : MonoBehaviour
         {
             for (int i = 0; i < count; i++)
             {
-                Debug.Log("정방향");
+                //Debug.Log("정방향");
                 sequence.Add((ArrowKey)Random.Range(0, 4));
                 GameObject arrow = Instantiate(arrowPrefab, arrowParent);
                 arrow.name = i.ToString();
@@ -175,6 +180,7 @@ public class ArrowSystem : MonoBehaviour
         {
             for (int i = 0; i < count; i++)
             {
+                arrowBackground.GetComponent<Image>().color = new Color(1f, 0f, 1f, 1f);
                 sequence.Add((ArrowKey)Random.Range(0, 4));
                 GameObject arrow = Instantiate(arrowPrefab, arrowParent);
                 arrow.name = i.ToString();
@@ -319,6 +325,7 @@ public class ArrowSystem : MonoBehaviour
         ClearArrow();
         Debug.Log("성공");
         arrowBackground.SetActive(false);
+        arrowTimer.gameObject.SetActive(false);
         GameManager.Instance.TakeDamage(-increHp);
         if (isBombReady)
         {
@@ -391,7 +398,7 @@ public class ArrowSystem : MonoBehaviour
             index = 1;
         }
         string path = $"EnemySprite/Enemy{GameManager.Instance.nowStage}_{index}";
-        Debug.Log(Resources.Load<Sprite>(path).name);
+        //Debug.Log(Resources.Load<Sprite>(path).name);
         return Resources.Load<Sprite>(path);
     }
 
@@ -461,4 +468,20 @@ public class ArrowSystem : MonoBehaviour
             waitingCustomer2.transform.GetChild(i).gameObject.SetActive(false);
         }
     }
+
+    private void HighlightCurrentArrow()
+{
+    foreach (Transform arrow in arrowParent)
+    {
+        arrow.localScale = Vector3.one;
+        arrow.GetComponent<Image>().color = new Color(1.3f, 1.3f, 1.3f, 0.5f);
+    }
+
+    Transform currentArrow = arrowParent.Find(currentKey.ToString());
+    if (currentArrow != null)
+    {
+        currentArrow.localScale = Vector3.one * 1.8f;
+        currentArrow.GetComponent<Image>().color = Color.white;
+    }
+}
 }
