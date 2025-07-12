@@ -71,7 +71,7 @@ public class EnemyAttackWarning : MonoBehaviour
         Debug.Log($"[위험] 경고 방향 {dir}에서 최대 밝기에 도달!");
 
         // 일정 시간 후 자동 비활성화
-        StartCoroutine(HideCriticalWarningEffect(dir, 4.0f));
+        StartCoroutine(HideCriticalWarningEffect(dir, 3.8f));
     }
 
     private IEnumerator HideCriticalWarningEffect(int dir, float delay)
