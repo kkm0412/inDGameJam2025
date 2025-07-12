@@ -16,6 +16,9 @@ public class ArrowSystem : MonoBehaviour
 
     public EnemyAttackController enemyAttackController;
     public GameObject throwBackGround;
+    public Image enemySprite;
+    public Animator explosiveAnim;
+    public Animator enemyDieEffect;
 
     public GameObject customer;
     public GameObject waitingcustomer;
@@ -40,6 +43,7 @@ public class ArrowSystem : MonoBehaviour
 
     private Animator animator;
     public Animator Anim => animator;
+
     private SpriteRenderer sr;
 
     private void Awake()
@@ -336,10 +340,56 @@ public class ArrowSystem : MonoBehaviour
     {
         arrowTimer.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
+        explosiveAnim.Play("enemyhit Animation");
+        Stage.Instance.TakeDamage(60);
+        explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
+        enemySprite.sprite = GetEnemySprite();
+        explosiveAnim.enabled = true;
+        if (Stage.Instance.GetStageData().enemyHp > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            arrowTimer.gameObject.SetActive(true);
+            throwBackGround.SetActive(false);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+            explosiveAnim.enabled = false;
+            enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
+            enemyDieEffect.enabled = true;
+            enemyAttackController.StopAllCoroutines();
+            Stage.Instance.StopAllCoroutines();
+            StopCoroutine(DelayedStartArrowInput());
+            StopInput();
+            yield return new WaitForSeconds(1f);
+            enemyDieEffect.gameObject.SetActive(false);
+            Debug.Log("적 사망2");
+            
+            
+        }
+    }
 
-        yield return new WaitForSeconds(1f);
-        arrowTimer.gameObject.SetActive(true);
-        throwBackGround.SetActive(false);
+    private Sprite GetEnemySprite()
+    {
+        int index = 0;
+        if (Stage.Instance.GetStageData().enemyHp <= 0)
+        {
+            index = 3;
+        }
+        else if (Stage.Instance.GetStageData().enemyHp <= Mathf.FloorToInt(Stage.Instance.GetStageData().enemyStartHp * 0.5f))
+        {
+            index = 2;
+        }
+        else
+        {
+            index = 1;
+        }
+        string path = $"EnemySprite/Enemy{GameManager.Instance.nowStage}_{index}";
+        Debug.Log(Resources.Load<Sprite>(path).name);
+        return Resources.Load<Sprite>(path);
     }
 
     private IEnumerator DelayedStartArrowInput()

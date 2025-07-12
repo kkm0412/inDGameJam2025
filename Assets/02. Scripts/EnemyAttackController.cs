@@ -2,14 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Analytics;
-using UnityEngine.XR;
 
 
 //적이 공격을 하기 위한 시스템.
 public class EnemyAttackController : MonoBehaviour
 {
-    GameManager gameManager;
     EnemyAttackWarning attackWarning;
 
     public ArrowSystem arrowSystem;
@@ -32,7 +29,6 @@ public class EnemyAttackController : MonoBehaviour
 
     void Start()
     {
-        gameManager = GetComponent<GameManager>();
         attackWarning = GetComponent<EnemyAttackWarning>();
         StartCoroutine(EnemyAttack());
     }
@@ -131,7 +127,7 @@ public class EnemyAttackController : MonoBehaviour
                     arrowSystem.Anim.SetTrigger("RightParrying");
                     isParrying = true; 
                     StartCoroutine(IsParrying());
-                    isParryAble = true;
+                    isParrySuccess = true;
                 }
                 else
                 {
