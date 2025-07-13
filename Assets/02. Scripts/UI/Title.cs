@@ -35,9 +35,8 @@ public class Title : MonoBehaviour
         TitlePlayer.GetComponent<Animator>().SetTrigger("GameStart");
         blackScreenImage.SetActive(true);
         SoundManager.Instance.backgroundAudioSource.Stop();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         blackScreenImage.GetComponent<Animator>().enabled = true;
-        yield return new WaitForSeconds(1f);
         SoundManager.Instance.PlaySound(7);
         yield return new WaitForSeconds(1f);
         SoundManager.Instance.PlayBackgroundMusic(1);
