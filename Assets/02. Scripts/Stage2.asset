@@ -17,5 +17,5 @@ MonoBehaviour:
   enemyHp: 400
   enemyHealInterval: 2
   enemyHealAmount: 4
-  enemyBombDamage: 10
+  enemyBombDamage: 50
   playerHpBonusOnClear: 100
