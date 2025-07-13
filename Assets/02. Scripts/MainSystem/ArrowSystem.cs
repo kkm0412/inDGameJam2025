@@ -112,8 +112,8 @@ public class ArrowSystem : MonoBehaviour
     public void StartArrowInput()
     {
         customer.SetActive(true);
-        waitingcustomer.SetActive(true);
-        waitingCustomer2.SetActive(true);
+        //waitingcustomer.SetActive(true);
+        //waitingCustomer2.SetActive(true);
 
         if (!enemyAttackController.isParrying)
         {
@@ -224,19 +224,19 @@ public class ArrowSystem : MonoBehaviour
 
         if (key == ArrowKey.Left)
         {
-            child.GetComponent<Image>().color = Color.red;
+            child.GetComponent<Image>().color = new Color (0.5867923f, 0.8700219f, 1f);
         }
         else if (key == ArrowKey.Right)
         {
-            child.GetComponent<Image>().color = Color.green;
+            child.GetComponent<Image>().color = new Color (1f, 0.9058824f, 0.764706f);
         }
         else if (key == ArrowKey.Up)
         {
-            child.GetComponent<Image>().color = Color.blue;
+            child.GetComponent<Image>().color = new Color (0.2470588f, 0.8901961f, 0.7294118f);
         }
         else if (key == ArrowKey.Down)
         {
-            child.GetComponent<Image>().color = Color.yellow;
+            child.GetComponent<Image>().color = new Color (1f, 0.3294118f,0.4941177f);
         }
     }
 
