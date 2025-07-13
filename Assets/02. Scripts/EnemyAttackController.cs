@@ -16,7 +16,6 @@ public class EnemyAttackController : MonoBehaviour
 
     private int atkDirection = 0; //0일시 좌, 1일시 우
     [SerializeField] private GameObject EnemyBombPrefab;    //폭탄 프리펩   //현재 폭탄 이펙트 없어서 사용 X
-    [SerializeField] private int EnemyBombDamage = 5;   //폭탄의 데미지, 패링 실패시 입는 피해량
     [SerializeField] private float attackPrePareTimeMin;    //적 공격 준비시간 최소
     [SerializeField] private float attackPrePareTimeMax;    //적 공격 준비시간 최대
     private float attackPrepareTime;    //적이 공격준비하는 시간, 랜덤으로 지정
@@ -70,7 +69,7 @@ public class EnemyAttackController : MonoBehaviour
                     parryFailEffect2.GetComponent<Image>().enabled = true;
                 }
                 SoundManager.Instance.PlaySound(8);
-                GameManager.Instance.TakeDamage(EnemyBombDamage);
+                GameManager.Instance.TakeDamage(Stage.Instance.GetStageData().enemyBombDamage);
 
                 yield return new WaitForSeconds(1f);
 
@@ -85,6 +84,11 @@ public class EnemyAttackController : MonoBehaviour
                 //플레이어에게 피해를 주는 효과 메서드
             }
         }
+    }
+
+    public void StopAttack()
+    {
+        StopCoroutine(EnemyAttackDirection(atkDirection));
     }
     /// <summary>
     /// 적의 공격이 좌와 우로 나누어질때를 구분함.
@@ -188,16 +192,29 @@ public class EnemyAttackController : MonoBehaviour
             parryEffect2.GetComponent<Animator>().enabled = true;
         }
         SoundManager.Instance.PlaySound(6);
+        Stage.Instance.TakeDamage(GameManager.Instance.PlayerParryDamage + GameManager.Instance.Combo);
+        GameManager.Instance.GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         yield return new WaitForSeconds(1f);
-        arrowSystem.throwBackGround.SetActive(false);
-        arrowSystem.arrowParent.gameObject.SetActive(true);
-        arrowSystem.arrowTimer.gameObject.SetActive(true);
-        arrowSystem.arrowBackground.SetActive(true);
-        parryEffect.GetComponent<Image>().enabled = false;
-        parryEffect2.GetComponent<Image>().enabled = false;
-        parryEffect.GetComponent<Animator>().enabled = false;
-        parryEffect2.GetComponent<Animator>().enabled = false;
-
+        if (Stage.Instance.GetStageData().enemyHp > 0)
+        {         
+            arrowSystem.throwBackGround.SetActive(false);
+            arrowSystem.arrowParent.gameObject.SetActive(true);
+            arrowSystem.arrowTimer.gameObject.SetActive(true);
+            arrowSystem.arrowBackground.SetActive(true);
+            parryEffect.GetComponent<Image>().enabled = false;
+            parryEffect2.GetComponent<Image>().enabled = false;
+            parryEffect.GetComponent<Animator>().enabled = false;
+            parryEffect2.GetComponent<Animator>().enabled = false;
+        }
+        else
+        {
+            parryEffect.GetComponent<Image>().enabled = false;
+            parryEffect2.GetComponent<Image>().enabled = false;
+            parryEffect.GetComponent<Animator>().enabled = false;
+            parryEffect2.GetComponent<Animator>().enabled = false;
+            arrowSystem.enemyDieF();
+            StopAllCoroutines();
+        }
         isParrying = false;
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,8 +24,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     // 플레이어 폭탄의 데미지 범위 (예: 5~10)
-    private int playerBombDamage = 5;
-    public int PlayerBombDamage => playerBombDamage;
+    private int[] playerBombDamage = { 30, 60, 90 };
+    public int[] PlayerBombDamage => playerBombDamage;
+
+    [SerializeField]
+    // 플레이어 폭탄의 데미지 범위 (예: 5~10)
+    private int playerParryDamage = 30;
+    public int PlayerParryDamage => playerParryDamage;
 
     // 폭탄 사용 쿨타임 (초)
     [SerializeField]
@@ -45,6 +51,7 @@ public class GameManager : MonoBehaviour
     public bool stageStart = false;
 
     public GameObject clearUI;
+    public GameObject overUI;
 
     public GameObject fadeOutBlack;
 
@@ -65,6 +72,7 @@ public class GameManager : MonoBehaviour
         combo = 0;
         leftStageTime = stageTimeLimit;
         clearUI.SetActive(false);
+        overUI.SetActive(false);
     }
 
     private void Start()
@@ -135,21 +143,31 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         Debug.Log("게임 오버");
+        StopCoroutine(enemyCoro);
+        enemyAttackController.StopAttack();
+        Stage.Instance.StopAllCoroutines();
+        StopCoroutine(arrowSystem.arrowCoro);
+        overUI.SetActive(true);
         arrowSystem.StopInput();
     }
 
     public void EnemyOver()
     {
         stageStart = false;
-        
         Debug.Log("적 사망");
     }
 
     public void StageEnd()
     {
-        clearUI.SetActive(true);
-        SoundManager.Instance.PlaySound(9);
-        Debug.Log("스테이지 종료");
+        if (playerHp > Stage.Instance.GetStageData().enemyHp)
+        {
+            clearUI.SetActive(true);
+            SoundManager.Instance.PlaySound(9);
+        }
+        else
+        {
+            GameOver();
+        }
     }
 
     public void NextStage()
@@ -162,17 +180,31 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.backgroundAudioSource.Stop();
         fadeOutBlack.SetActive(true);
         fadeOutBlack.GetComponent<Animator>().enabled = true;
-        yield return new WaitForSeconds(1.3f);
+        yield return new WaitForSeconds(1.5f);
         fadeOutBlack.GetComponent<Animator>().enabled = false;
 
         fadeOutBlack.SetActive(false);
         clearUI.SetActive(false);
         TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
         leftStageTime = stageTimeLimit; // 스테이지 시간 초기화
-        this.gameObject.GetComponent<UIManager>().stageTimer.text = "02:00";
+        GetComponent<UIManager>().stageTimer.text = "02:00";
         nowStage += 1;
         SoundManager.Instance.PlayBackgroundMusic(nowStage);
         DialogManager.Instance.AppearDialogUI();
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
     }
+
+    public void ReStartGame()
+    {
+        SceneManager.LoadScene("MainStage");
+
+    }
+
+    public void GoTitle()
+    {
+        SceneManager.LoadScene("TitleScene");
+
+    }
+
+
 }

@@ -49,6 +49,8 @@ public class ArrowSystem : MonoBehaviour
 
     private Dictionary<GameObject, Coroutine> activeCoroutines = new();
 
+    public Coroutine arrowCoro;
+
     private void Awake()
     {
         animator = playerHand.GetComponent<Animator>();
@@ -414,7 +416,7 @@ public class ArrowSystem : MonoBehaviour
         }
         SoundManager.Instance.PlaySound(2); // 사운드 재생
         isActive = false;
-        StartCoroutine(DelayedStartArrowInput());
+        arrowCoro = StartCoroutine(DelayedStartArrowInput());
     }
 
     IEnumerator DelayThrow()
@@ -422,14 +424,14 @@ public class ArrowSystem : MonoBehaviour
         arrowTimer.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
         explosiveAnim.Play("enemyhit Animation");
-        Stage.Instance.TakeDamage(60);
+        Stage.Instance.TakeDamage(GameManager.Instance.PlayerBombDamage[GameManager.Instance.nowStage-1]);
         GameManager.Instance.GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         explosiveAnim.gameObject.GetComponent<Image>().enabled = true;
         enemySprite.sprite = GetEnemySprite();
         explosiveAnim.enabled = true;
+        yield return new WaitForSeconds(1f);
         if (Stage.Instance.GetStageData().enemyHp > 0)
-        {
-            yield return new WaitForSeconds(1f);
+        {    
             explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
             explosiveAnim.enabled = false;
             if (!enemyAttackController.isParrying)
@@ -440,23 +442,33 @@ public class ArrowSystem : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(1f);
-            explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
-            explosiveAnim.enabled = false;
-            enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
-            enemyDieEffect.enabled = true;
-            StopCoroutine(GameManager.Instance.enemyCoro);
-            Stage.Instance.StopAllCoroutines();
-            StopCoroutine(DelayedStartArrowInput());
-            StopInput();
-            arrowBackground.SetActive(false);
-            yield return new WaitForSeconds(1f);
-            enemyDieEffect.gameObject.SetActive(false);
-            GameManager.Instance.StageEnd();
-            Debug.Log("적 사망2");
-
+            StartCoroutine(enemyDie());
         }
     }
+
+    public void enemyDieF()
+    {
+        StartCoroutine(enemyDie());
+    }
+
+    IEnumerator enemyDie()
+    {
+        Debug.Log("적 사망2");
+        enemyAttackController.StopAttack();
+        explosiveAnim.gameObject.GetComponent<Image>().enabled = false;
+        explosiveAnim.enabled = false;
+        enemyDieEffect.gameObject.GetComponent<Image>().enabled = true;
+        enemyDieEffect.enabled = true;
+        StopCoroutine(GameManager.Instance.enemyCoro);
+        Stage.Instance.StopAllCoroutines();
+        StopCoroutine(DelayedStartArrowInput());
+        StopInput();
+        arrowBackground.SetActive(false);
+        yield return new WaitForSeconds(1f);
+        enemyDieEffect.gameObject.SetActive(false);
+        GameManager.Instance.StageEnd();
+    }
+
     public Sprite GetEnemySprite()
     {
         int index = 0;

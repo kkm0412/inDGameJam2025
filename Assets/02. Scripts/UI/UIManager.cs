@@ -8,6 +8,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour
 {
+
     public TMP_Text stageTimer;
     public TMP_Text playerHpText;
     public TMP_Text enemyHpText;

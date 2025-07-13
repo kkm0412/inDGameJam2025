@@ -110,7 +110,7 @@ public class DialogManager : MonoBehaviour
         labels[GameManager.Instance.nowStage - 1].SetActive(false);
         anim.enabled = true;
         anim.Play("Black2");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
         anim.enabled = false;
         
         anim.gameObject.SetActive(false);
