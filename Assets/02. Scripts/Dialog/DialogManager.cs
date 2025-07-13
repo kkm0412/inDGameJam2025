@@ -14,11 +14,10 @@ public class DialogManager : MonoBehaviour
     public GameObject dialogUI;
     public Image cutSceneImage;
     public Dialog[] dialogList;
-    public GameObject[] labels;
     public Dialog currentDialog;
     public List<DialogData> currentText;
 
-    public Animator anim;
+    public Animator[] anim;
 
     public Image startButtonImage;
     public Button nextDialogButton;
@@ -103,16 +102,13 @@ public class DialogManager : MonoBehaviour
 
     IEnumerator FadeIn()
     {
-        anim.gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 1);
-        anim.gameObject.SetActive(true);
-        labels[GameManager.Instance.nowStage - 1].SetActive(true);
-        yield return new WaitForSeconds(5f);
-        labels[GameManager.Instance.nowStage - 1].SetActive(false);
-        anim.enabled = true;
-        anim.Play("Black2");
+        anim[GameManager.Instance.nowStage - 1].gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        anim[GameManager.Instance.nowStage - 1].gameObject.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        anim[GameManager.Instance.nowStage - 1].enabled = true;
+        anim[GameManager.Instance.nowStage - 1].Play("Black2");
         yield return new WaitForSeconds(1.5f);
-        anim.enabled = false;
-        
-        anim.gameObject.SetActive(false);
+        anim[GameManager.Instance.nowStage - 1].enabled = false;
+        anim[GameManager.Instance.nowStage - 1].gameObject.SetActive(false);
     }
 }

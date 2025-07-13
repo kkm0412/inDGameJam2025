@@ -274,6 +274,7 @@ public class ArrowSystem : MonoBehaviour
     {
         if (!isActive) return;
         if (enemyAttackController.isParrying) return;
+        if (GameManager.Instance.isPaused) return;
 
         ArrowKey expected = sequence[currentKey];
         ArrowKey correctInput = isReverse ? GetOpposite(expected) : expected;

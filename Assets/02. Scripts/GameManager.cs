@@ -50,8 +50,11 @@ public class GameManager : MonoBehaviour
 
     public bool stageStart = false;
 
+    public GameObject endingUI;
     public GameObject clearUI;
     public GameObject overUI;
+    public GameObject pauseUI;
+    public bool isPaused = false;
 
     public GameObject fadeOutBlack;
 
@@ -71,6 +74,8 @@ public class GameManager : MonoBehaviour
         }
         combo = 0;
         leftStageTime = stageTimeLimit;
+        isPaused = false;
+        pauseUI.SetActive(false);
         clearUI.SetActive(false);
         overUI.SetActive(false);
     }
@@ -90,6 +95,18 @@ public class GameManager : MonoBehaviour
             {
                 stageStart = false;
                 StageEnd();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (pauseUI.activeSelf)
+            {
+                PauseOff();
+            }
+            else
+            {
+                PauseOn();
             }
         }
     }
@@ -112,6 +129,7 @@ public class GameManager : MonoBehaviour
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
         GetComponent<UIManager>().enemyHpText.text = Stage.Instance.GetStageData().enemyHp.ToString();
         yield return new WaitForSeconds(3f);
+        arrowSystem.arrowParent.gameObject.SetActive(true);
         Stage.Instance.StartAutoHeal();
         arrowSystem.enemySprite.sprite = arrowSystem.GetEnemySprite();
         stageStart = true;
@@ -172,7 +190,20 @@ public class GameManager : MonoBehaviour
 
     public void NextStage()
     {
-        StartCoroutine(NextStageFadeOut());
+        if (nowStage == 3)
+        {
+            GameEnding();
+        }
+        else
+        {
+            StartCoroutine(NextStageFadeOut());
+        }
+    }
+
+    public void GameEnding()
+    {
+        endingUI.SetActive(true);
+
     }
 
     public IEnumerator NextStageFadeOut()
@@ -182,7 +213,7 @@ public class GameManager : MonoBehaviour
         fadeOutBlack.GetComponent<Animator>().enabled = true;
         yield return new WaitForSeconds(1.5f);
         fadeOutBlack.GetComponent<Animator>().enabled = false;
-
+        
         fadeOutBlack.SetActive(false);
         clearUI.SetActive(false);
         TakeDamage(-Stage.Instance.GetStageData().playerHpBonusOnClear);
@@ -193,6 +224,22 @@ public class GameManager : MonoBehaviour
         DialogManager.Instance.AppearDialogUI();
         Stage.Instance.InitStageData(Stage.Instance.stageBase[nowStage - 1]);
     }
+
+    public void PauseOn()
+    {
+        pauseUI.SetActive(true);
+        isPaused = true;
+        Time.timeScale = 0f; // 게임 일시정지
+    }
+
+    public void PauseOff()
+    {
+        pauseUI.SetActive(false);
+        isPaused = false;
+        Time.timeScale = 1f;
+    }
+
+
 
     public void ReStartGame()
     {
