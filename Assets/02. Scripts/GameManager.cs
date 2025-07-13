@@ -162,6 +162,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("게임 오버");
         StopCoroutine(enemyCoro);
+        SoundManager.Instance.PlayBackgroundMusic(5);
         enemyAttackController.StopAttack();
         Stage.Instance.StopAllCoroutines();
         StopCoroutine(arrowSystem.arrowCoro);
@@ -202,6 +203,7 @@ public class GameManager : MonoBehaviour
 
     public void GameEnding()
     {
+        SoundManager.Instance.PlayBackgroundMusic(4);
         endingUI.SetActive(true);
 
     }
