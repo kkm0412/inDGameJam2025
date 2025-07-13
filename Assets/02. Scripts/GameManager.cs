@@ -151,6 +151,7 @@ public class GameManager : MonoBehaviour
     public void TakeDamage(int amount)
     {
         playerHp -= amount;
+        StartCoroutine(this.gameObject.GetComponent<UIManager>().UpdatePlayerHealth(amount));
         OnHpChanged?.Invoke(playerHp);
         if (playerHp <= 0)
         {
@@ -181,6 +182,7 @@ public class GameManager : MonoBehaviour
         if (playerHp > Stage.Instance.GetStageData().enemyHp)
         {
             clearUI.SetActive(true);
+            SoundManager.Instance.backgroundAudioSource.Stop();
             SoundManager.Instance.PlaySound(9);
         }
         else
@@ -191,6 +193,7 @@ public class GameManager : MonoBehaviour
 
     public void NextStage()
     {
+        SoundManager.Instance.soundEffectAudioSource.Stop();
         if (nowStage == 3)
         {
             GameEnding();

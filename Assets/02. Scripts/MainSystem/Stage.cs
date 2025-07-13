@@ -60,6 +60,7 @@ public class Stage : MonoBehaviour
     public void TakeDamage(int amount)
     {
         stageData.enemyHp -= amount;
+        StartCoroutine(GameManager.Instance.gameObject.GetComponent<UIManager>().UpdateEnemyHealth(amount));
         Debug.Log(stageData.enemyHp);
 
         if (stageData.enemyHp <= 0 )

@@ -1163,9 +1163,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3016a2dc593867e40b2c1833895f4381, type: 3}
   soundEffects:
   - {fileID: 8300000, guid: a991220774e490e4e97d90a0f9c7421c, type: 3}
-  - {fileID: 8300000, guid: a08c9fc05794a4946b0568545c298545, type: 3}
-  - {fileID: 8300000, guid: 075fe13533fec9443a3bfd746dee2f60, type: 3}
-  - {fileID: 8300000, guid: 6e6d01543985c8f4093eca79fa534696, type: 3}
+  - {fileID: 8300000, guid: fc0b55c45bebe284ea82686b3bc763b7, type: 3}
+  - {fileID: 8300000, guid: 4724d37937adece43849f04d9710d147, type: 3}
+  - {fileID: 8300000, guid: 5d9093a00e36ce24e853f6d7d5c847ba, type: 3}
   - {fileID: 8300000, guid: 29d10dbd1194f194083757ae72258452, type: 3}
   - {fileID: 8300000, guid: f5c68dc0570c06d4a991244e8786f637, type: 3}
   - {fileID: 8300000, guid: 8683f8e773297eb429313013e1f9708a, type: 3}
